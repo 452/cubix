@@ -6,8 +6,8 @@ import java.awt.*;
 
 public abstract class Game
 {
-	Geometry world;
-	elements.GameCube cube;
+	public Geometry world;
+	public elements.GameCube cube;
 
 	public void deleteCubeFromWorld()
 	{

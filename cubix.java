@@ -52,7 +52,7 @@ public class cubix extends RenderApplet
 		if(gameNum == MAX_COLOR_GAME)
 		{
 			this.gameOn = true;
-			this.game = new MaxColorGame(this.getWorld());
+			this.game = new games.maxColorGame.MaxColorGame(this.getWorld());
 			this.game.initGame();
 
 			//this.stopGame();

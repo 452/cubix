@@ -1,5 +1,6 @@
-package games;
+package games.maxColorGame;
 
+import games.*;
 import elements.*;
 import render.*;
 import java.awt.*;
