@@ -4,21 +4,28 @@ import games.*;
 import elements.*;
 import render.*;
 import java.awt.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
+import java.applet.AudioClip;
 
 public class MaxColorGame extends Game implements ActionListener
 {
-	int level = 1;
+	java.applet.Applet app;
+
+	private int level = 1;
+
+	// Audio variables
+	private AudioClip backgroundAudio;
+	private boolean audioOn = false;
 
 	// Timer for delayed and timed actions
 	private Timer timer;
 	private int delay = 2000;
 
-	public MaxColorGame(Geometry world)
+	public MaxColorGame(java.applet.Applet app, Geometry world)
 	{
+		this.app = app;
 		this.world = world;
 		this.cube = new GameCube(world);
 	}
@@ -26,6 +33,7 @@ public class MaxColorGame extends Game implements ActionListener
 	public void initGame()
 	{
 		this.initLevel();
+		this.playAudio();
 	}
 
 	// Perform any necessary stop steps
@@ -35,6 +43,8 @@ public class MaxColorGame extends Game implements ActionListener
 		this.stopTimer();
 
 		this.deleteCubeFromWorld();
+
+		this.stopAudio();
 	}
 
 	// Method to initialize a game level
@@ -60,6 +70,24 @@ public class MaxColorGame extends Game implements ActionListener
 		this.cube.setGeometryMaterial(customGeoArray[row+1][column], currentColor);
 		this.cube.setGeometryMaterial(customGeoArray[row][column-1], currentColor);
 		this.cube.setGeometryMaterial(customGeoArray[row][column+1], currentColor);
+	}
+
+	public void playAudio()
+	{
+		if(this.backgroundAudio == null)
+		{
+			this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(), "games/maxColorGame/audio/background.wav");
+		}
+
+		this.backgroundAudio.loop();
+	}
+
+	public void stopAudio()
+	{
+		if (this.backgroundAudio != null) {
+			this.backgroundAudio.stop();
+			this.backgroundAudio = null;
+		}
 	}
 
 	public void animate(double time)

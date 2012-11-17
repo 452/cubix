@@ -22,6 +22,8 @@ public abstract class Game
 	public abstract void initLevel();
 	public abstract void stop();
 	public abstract void clickTile(int face, int row, int column);
+	public abstract void playAudio();
+	public abstract void stopAudio();
 	public abstract void animate(double time);
 	public abstract void drawOverlay(Graphics g);
 }

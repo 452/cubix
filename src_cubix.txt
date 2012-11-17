@@ -1,4 +1,4 @@
-C:\Users\me\Documents\GitHub\cubix\cubix.java
+C:\Users\me\Documents\GitHub\cubix\Cubix.java
 C:\Users\me\Documents\GitHub\cubix\elements\GameCube.java
 C:\Users\me\Documents\GitHub\cubix\games\Game.java
 C:\Users\me\Documents\GitHub\cubix\games\maxColorGame\MaxColorGame.java
