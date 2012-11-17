@@ -13,7 +13,7 @@ public abstract class Game
 	{
 		if(this.world != null && this.cube != null)
 		{
-			this.cube.removeFromWorld(world);
+			this.cube.removeFromWorld(this.world);
 			this.cube = null;
 		}
 	}
@@ -22,8 +22,8 @@ public abstract class Game
 	public abstract void initLevel();
 	public abstract void stop();
 	public abstract void clickTile(int face, int row, int column);
-	public abstract void playAudio();
-	public abstract void stopAudio();
+	public abstract void enableAudio();
+	public abstract void disableAudio();
 	public abstract void animate(double time);
 	public abstract void drawOverlay(Graphics g);
 }

@@ -15,6 +15,9 @@ public class MaxColorGame extends Game implements ActionListener
 
 	private int level = 1;
 
+	// Gameplay variables
+	private boolean gameOn = false, gameOver = false, gameWin = false;
+
 	// Audio variables
 	private AudioClip backgroundAudio;
 	private boolean audioOn = false;
@@ -28,28 +31,39 @@ public class MaxColorGame extends Game implements ActionListener
 		this.app = app;
 		this.world = world;
 		this.cube = new GameCube(world);
+
+		this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
+			"games/maxColorGame/audio/background.wav");
 	}
 
 	public void initGame()
 	{
 		this.initLevel();
-		this.playAudio();
+		this.enableAudio();
 	}
 
 	// Perform any necessary stop steps
 	public void stop()
 	{
+		this.gameOn = false;
+
 		// Make sure the timer stops at the stop of the game
 		this.stopTimer();
 
 		this.deleteCubeFromWorld();
 
-		this.stopAudio();
+		if(this.backgroundAudio != null)
+		{
+			this.backgroundAudio.stop();
+			this.backgroundAudio = null;
+		}
 	}
 
 	// Method to initialize a game level
 	public void initLevel()
 	{
+		this.gameOn = true;
+
 		// Call method to randomize the cube tile colors
 		this.cube.randomizeCubeColors();
 
@@ -64,7 +78,8 @@ public class MaxColorGame extends Game implements ActionListener
 		Geometry[][] customGeoArray = this.cube.getFace(face);
 		Material currentColor = customGeoArray[row][column].material;
 		// Invert its color
-		customGeoArray[row][column].setMaterial(currentColor == this.cube.getLitColor() ? this.cube.getUnlitColor() : this.cube.getLitColor());
+		customGeoArray[row][column].setMaterial(currentColor == this.cube.getLitColor() ?
+			this.cube.getUnlitColor() : this.cube.getLitColor());
 		// Spread the tile color to the touching side tiles
 		this.cube.setGeometryMaterial(customGeoArray[row-1][column], currentColor);
 		this.cube.setGeometryMaterial(customGeoArray[row+1][column], currentColor);
@@ -72,21 +87,21 @@ public class MaxColorGame extends Game implements ActionListener
 		this.cube.setGeometryMaterial(customGeoArray[row][column+1], currentColor);
 	}
 
-	public void playAudio()
+	public void enableAudio()
 	{
 		if(this.backgroundAudio == null)
 		{
-			this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(), "games/maxColorGame/audio/background.wav");
+			this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
+				"games/maxColorGame/audio/background.wav");
 		}
 
 		this.backgroundAudio.loop();
 	}
 
-	public void stopAudio()
+	public void disableAudio()
 	{
 		if (this.backgroundAudio != null) {
 			this.backgroundAudio.stop();
-			this.backgroundAudio = null;
 		}
 	}
 
@@ -124,15 +139,13 @@ public class MaxColorGame extends Game implements ActionListener
 		//this.stopTimer();
 		//this.initLevel();
 
-		/*
 		if(this.gameOn && !this.gameOver)
 		{
 			// When timer calls action, get a random tile and call its clicked action
-			int face = (int)(Math.random()*this.numFaces);
-			int row = 1+(int)(Math.random()*this.dimension);
-			int column = 1+(int)(Math.random()*this.dimension);
-			this.clickTile(this.facesArray[face], row, column);
+			int face = (int)(Math.random()*this.cube.getNumFaces());
+			int row = 1+(int)(Math.random()*this.cube.getDimension());
+			int column = 1+(int)(Math.random()*this.cube.getDimension());
+			this.clickTile(face, row, column);
 		}
-		*/
 	}
 }

@@ -131,6 +131,16 @@ public class GameCube
 		return this.facesArray[faceNum];
 	}
 
+	public int getNumFaces()
+	{
+		return this.numFaces;
+	}
+
+	public int getDimension()
+	{
+		return this.dimension;
+	}
+
 	public Material getLitColor()
 	{
 		return this.litColor;
