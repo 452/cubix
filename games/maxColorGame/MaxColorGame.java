@@ -13,7 +13,7 @@ public class MaxColorGame extends Game implements ActionListener
 {
 	java.applet.Applet app;
 
-	private int level = 1;
+	private int level = 1, numCubeDimensions = 6;
 
 	// Gameplay variables
 	private boolean gameOn = false, gameOver = false, gameWin = false;
@@ -30,9 +30,7 @@ public class MaxColorGame extends Game implements ActionListener
 	{
 		this.app = app;
 		this.world = world;
-		this.cube = new GameCube(world);
 		this.audioOn = audioStatus;
-
 		this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
 			"games/maxColorGame/audio/background.wav");
 	}
@@ -42,6 +40,7 @@ public class MaxColorGame extends Game implements ActionListener
 		this.initLevel();
 		if(this.audioOn)
 			this.enableAudio();
+		this.gameOn = true;
 	}
 
 	// Perform any necessary stop steps
@@ -64,8 +63,13 @@ public class MaxColorGame extends Game implements ActionListener
 	// Method to initialize a game level
 	public void initLevel()
 	{
-		this.gameOn = true;
-
+		// If already a cube, clear it out
+		if(this.cube != null)
+		{
+			this.deleteCubeFromWorld();
+		}
+		// Re-create the cube
+		this.cube = new GameCube(world, this.numCubeDimensions);
 		// Call method to randomize the cube tile colors
 		this.cube.randomizeCubeColors();
 

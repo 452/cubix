@@ -9,18 +9,28 @@ public class GameCube
 	int dimension = 5, 	midDimension = this.dimension/2+1;
 	Geometry center;
 	Matrix m;
-	private int numFaces = 6;
 	// 3D array of tiles, faces order as follows: front, back, top, bottom, right, left
-	Geometry[][][] facesArray = new Geometry[this.numFaces][this.dimension+2][this.dimension+2];
+	Geometry[][][] facesArray;
+	double tileScaleDimension, stepX, stepY;
+	// Below variables should never change
+	private final double tileThickness = 0.01, faceCenterOffset = 1.25;
+	private final int numFaces = 6;
 
-	public GameCube(Geometry world)
+	public GameCube(Geometry world, int dimension)
 	{
 		this.center = world.add();
-		this.initialize();
+		this.initialize(dimension);
 	}
 
-	void initialize()
+	void initialize(int dimension)
 	{
+		this.dimension = dimension;
+		this.midDimension = dimension/2+1;
+
+		// Initialize appropriate cube dimensions
+		this.facesArray = new Geometry[this.numFaces][this.dimension+2][this.dimension+2];
+		this.tileScaleDimension = 1.25/dimension;
+
 		// Set cube and tile materials
 		this.litColor = new Material();
 		this.litColor.setAmbient(0.7, 0.7, 0.7);
@@ -158,8 +168,6 @@ public class GameCube
 			cg.setMaterial(m);
 	}
 
-	double tileScaleDimension = 0.25, tileThickness = 0.01, faceCenterOffset = 1.25;
-
 	public void animate(double time)
 	{
 		this.m = this.center.getMatrix();
@@ -172,9 +180,14 @@ public class GameCube
 			for(int column = 1; column <= this.dimension; column++)
 			{
 				// Get its appropriate x and y coordinates, move and resize each tile
-				double stepX, stepY;
-				stepX = -((double)(this.midDimension-column))/2;
-				stepY = -((double)(this.midDimension-row))/2;
+				stepX = -((double)(this.midDimension-column))/2*5/this.dimension;
+				stepY = -((double)(this.midDimension-row))/2*5/this.dimension;
+
+				if(this.dimension%2 == 0)
+				{
+					stepX += this.faceCenterOffset/this.dimension;
+					stepY += this.faceCenterOffset/this.dimension;
+				}
 
 				// Set front face
 				Geometry tempGeo = this.facesArray[0][row][column];

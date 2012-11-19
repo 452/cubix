@@ -224,7 +224,7 @@ public class Cubix extends RenderApplet
 
 	public void animate(double time)
 	{
-		if(this.game != null)
+		if(this.gameOn && this.game != null)
 		{
 			this.game.animate(time);
 		}
