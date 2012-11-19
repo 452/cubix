@@ -15,19 +15,51 @@ public class Cubix extends RenderApplet
 	double point[] = new double[3];
 	boolean isCapturedClick = false;
 
+	// Button variables
+	Polygon audioButton;
+	Polygon mainMenuButton;
+	Polygon maxColorGameButton;
+	Color buttonColor;
+
 	GameCube cube;
 	Game game;
 
 	// Gameplay variables
-	boolean introScreenOn = true, gameOn = false, gameOver = false, gameWin = false;
+	boolean introScreenOn = true, gameOn = false, audioOn = true;
 
 	static final int MAX_COLOR_GAME = 0;
 
 	public void initialize()
 	{
+		// Initialize world color and light variables
 		setBgColor(.7, .7, .9);
 		addLight( 1, 1, 1, .8, .85, 1);
 		addLight(-1,-1,-1, 1, 1, 1);
+
+		// Set button color
+		this.buttonColor = Color.WHITE;
+
+		// Initialize game buttons as Polygons
+		// Initialize audio button
+		this.audioButton = new Polygon();
+		this.audioButton.addPoint(10, 440);
+		this.audioButton.addPoint(90, 440);
+		this.audioButton.addPoint(90, 470);
+		this.audioButton.addPoint(10, 470);
+
+		// Initialize main menu button
+		this.mainMenuButton = new Polygon();
+		this.mainMenuButton.addPoint(10, 10);
+		this.mainMenuButton.addPoint(70, 10);
+		this.mainMenuButton.addPoint(70, 40);
+		this.mainMenuButton.addPoint(10, 40);
+
+		// Initialize the max color game button
+		this.maxColorGameButton = new Polygon();
+		this.maxColorGameButton.addPoint(250, 260);
+		this.maxColorGameButton.addPoint(380, 260);
+		this.maxColorGameButton.addPoint(380, 300);
+		this.maxColorGameButton.addPoint(250, 300);
 
 		// Call method to set up the intro/main screen
 		this.initializeIntroScreen();
@@ -51,10 +83,8 @@ public class Cubix extends RenderApplet
 		if(gameNum == MAX_COLOR_GAME)
 		{
 			this.gameOn = true;
-			this.game = new games.maxColorGame.MaxColorGame(this, this.getWorld());
+			this.game = new games.maxColorGame.MaxColorGame(this, this.getWorld(), this.audioOn);
 			this.game.initGame();
-
-			//this.stopGame();
 		}
 	}
 
@@ -75,6 +105,7 @@ public class Cubix extends RenderApplet
 			this.game.stop();
 			this.game = null;
 		}
+		this.gameOn = false;
 
 		// Set variable to show the intro screen
 		this.introScreenOn = true;
@@ -82,21 +113,41 @@ public class Cubix extends RenderApplet
 
 	public void drawOverlay(Graphics g)
 	{
+		// Draw the audio button regardless of status
+		g.setColor(Color.WHITE);
+		g.fillPolygon(this.audioButton);
+		g.setColor(Color.BLACK);
+		g.drawString(this.audioOn ? "AUDIO: ON" : "AUDIO: OFF", this.audioButton.getBounds().x+10,
+			this.audioButton.getBounds().y+20);
+
 		// If on the intro screen, draw it
 		if(this.introScreenOn)
 		{
+			// Get center x and y coordinates
 			int centerWidth = this.getWidth()/2;
 			int centerHeight = this.getHeight()/2;
-			g.setColor(Color.WHITE);
-			g.fillRect(centerWidth-40, centerHeight-20, 80, 40);
-			g.setColor(Color.BLACK);
-			g.drawString("START", centerWidth-20, centerHeight);
-		}
 
-		// If there is an active game, call its drawOverlay method too
-		if(this.game != null)
+			// Draw the max color game button
+			g.setColor(Color.WHITE);
+			g.fillPolygon(this.maxColorGameButton);
+			g.setColor(Color.BLACK);
+			g.drawString("MAX COLOR GAME", this.maxColorGameButton.getBounds().x+10,
+				this.maxColorGameButton.getBounds().y+25);
+		}
+		else if(this.gameOn)
 		{
-			this.game.drawOverlay(g);
+			// Draw the menu button
+			g.setColor(this.buttonColor);
+			g.fillPolygon(this.mainMenuButton);
+			g.setColor(Color.BLACK);
+			g.drawString("MENU", this.mainMenuButton.getBounds().x+10,
+				this.mainMenuButton.getBounds().y+20);
+
+			// If there is an active game, call its drawOverlay method too
+			if(this.game != null)
+			{
+				this.game.drawOverlay(g);
+			}
 		}
 	}
 
@@ -126,25 +177,32 @@ public class Cubix extends RenderApplet
 
 	public boolean mouseUp(Event e, int x, int y)
 	{
+		// Check if mouse up on the audio button regardless of status
+		if(this.audioButton.contains(x, y))
+		{
+			this.toggleAudio();
+		}
+
 		// If still on the intro screen
 		if(this.introScreenOn)
 		{
-			// Get dimensions of start game button
-			int startX = this.getWidth()/2-40, endX = startX+80;
-			int startY = this.getHeight()/2-20, endY = startY+40;
-
-			// Check if clicked within the bounds of the start game button
-			if(x >= startX && x <= endX && y >= startY && y <= endY)
+			// Check if any of the buttons are clicked
+			if(this.maxColorGameButton.contains(x, y))
 			{
-				// Disable intro screen and start game if so
 				this.introScreenOn = false;
 				this.initGame(this.MAX_COLOR_GAME);
 			}
 
 			return true;
 		}
-		else
+		else if(this.gameOn)
 		{
+			// If click up on the menu button
+			if(this.mainMenuButton.contains(x, y))
+			{
+				this.initializeIntroScreen();
+			}
+
 			// Else if a click is captured
 			if(this.isCapturedClick)
 			{
@@ -156,10 +214,10 @@ public class Cubix extends RenderApplet
 					// Call game's method to handle action when a tile is clicked
 					this.game.clickTile(g.getFace(), g.getPositionRow(), g.getPositionColumn());
 				}
-
-				isCapturedClick = false;
-				return true;
 			}
+
+			isCapturedClick = false;
+			return true;
 		}
 		return false;
 	}
@@ -170,5 +228,15 @@ public class Cubix extends RenderApplet
 		{
 			this.game.animate(time);
 		}
+	}
+
+	void toggleAudio()
+	{
+		// invert audio status
+		this.audioOn = !this.audioOn;
+
+		// If game is on, toggle its audio as well
+		if(this.gameOn && this.game != null)
+			this.game.toggleAudio(this.audioOn);
 	}
 }

@@ -30,21 +30,33 @@
 	</projects>
 	<open_files>
 		<docitem>
-			<path>Cubix.java</path>
+			<path>render\RenderApplet.java</path>
 			<source>true</source>
 			<index>0</index>
-			<active>true</active>
+			<active>false</active>
 		</docitem>
 		<docitem>
-			<path>games\Game.java</path>
+			<path>Cubix.java</path>
 			<source>true</source>
 			<index>1</index>
 			<active>false</active>
 		</docitem>
 		<docitem>
-			<path>games\maxColorGame\MaxColorGame.java</path>
+			<path>elements\GameCube.java</path>
 			<source>true</source>
 			<index>2</index>
+			<active>false</active>
+		</docitem>
+		<docitem>
+			<path>games\Game.java</path>
+			<source>true</source>
+			<index>3</index>
+			<active>true</active>
+		</docitem>
+		<docitem>
+			<path>games\maxColorGame\MaxColorGame.java</path>
+			<source>true</source>
+			<index>4</index>
 			<active>false</active>
 		</docitem>
 	</open_files>

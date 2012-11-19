@@ -26,11 +26,12 @@ public class MaxColorGame extends Game implements ActionListener
 	private Timer timer;
 	private int delay = 2000;
 
-	public MaxColorGame(java.applet.Applet app, Geometry world)
+	public MaxColorGame(java.applet.Applet app, Geometry world, boolean audioStatus)
 	{
 		this.app = app;
 		this.world = world;
 		this.cube = new GameCube(world);
+		this.audioOn = audioStatus;
 
 		this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
 			"games/maxColorGame/audio/background.wav");
@@ -39,7 +40,8 @@ public class MaxColorGame extends Game implements ActionListener
 	public void initGame()
 	{
 		this.initLevel();
-		this.enableAudio();
+		if(this.audioOn)
+			this.enableAudio();
 	}
 
 	// Perform any necessary stop steps
@@ -85,6 +87,14 @@ public class MaxColorGame extends Game implements ActionListener
 		this.cube.setGeometryMaterial(customGeoArray[row+1][column], currentColor);
 		this.cube.setGeometryMaterial(customGeoArray[row][column-1], currentColor);
 		this.cube.setGeometryMaterial(customGeoArray[row][column+1], currentColor);
+	}
+
+	public void toggleAudio(boolean b)
+	{
+		if(b)
+			enableAudio();
+		else
+			disableAudio();
 	}
 
 	public void enableAudio()
