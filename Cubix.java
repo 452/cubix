@@ -9,6 +9,8 @@ import elements.*;
 import games.*;
 import render.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Cubix extends RenderApplet
 {
@@ -28,12 +30,22 @@ public class Cubix extends RenderApplet
 	boolean introScreenOn = true, gameOn = false, audioOn = true;
 	static final int MAX_COLOR_GAME = 0;
 
+	//Some UI stuff 
+	private Font bigFont = new Font("Helvetica", Font.BOLD,40);
+	Image img;
+	MediaTracker tr;
+
 	public void initialize()
 	{
-		
+
 		//String imagePath = getCodeBase()+"background.png";
 		Renderer.setBg("background.png");
 		
+		tr = new MediaTracker(this);
+		img = getImage(getCodeBase(), "score.png");
+		tr.addImage(img,0);
+	
+
 		// Initialize world color and light variables
 		//setBgColor(.7, .7, .9);
 		addLight( 1, 1, 1, .8, .85, 1);
@@ -89,7 +101,7 @@ public class Cubix extends RenderApplet
 			this.game = new games.maxColorGame.MaxColorGame(this, this.getWorld(), this.audioOn);
 			this.game.initGame();
 		}
-		
+
 	}
 
 	private void stopGame()
@@ -117,15 +129,15 @@ public class Cubix extends RenderApplet
 
 	public void drawOverlay(Graphics g)
 	{
-		
+
 		// Draw the audio button regardless of status
 		g.setColor(Color.WHITE);
 		g.fillPolygon(this.audioButton);
 		g.setColor(Color.BLACK);
 		g.drawString(this.audioOn ? "AUDIO: ON" : "AUDIO: OFF", this.audioButton.getBounds().x+10,
-			this.audioButton.getBounds().y+20);
+				this.audioButton.getBounds().y+20);
 
-		
+
 		// If on the intro screen, draw it
 		if(this.introScreenOn)
 		{
@@ -133,12 +145,19 @@ public class Cubix extends RenderApplet
 			int centerWidth = this.getWidth()/2;
 			int centerHeight = this.getHeight()/2;
 
+			Font saveOld = g.getFont();
+			g.setColor(Color.BLUE);
+			g.setFont(bigFont);
+			g.drawString("CUBIX",centerWidth-60,150);
+			g.setFont(saveOld);
+
+
 			// Draw the max color game button
 			g.setColor(Color.WHITE);
 			g.fillPolygon(this.maxColorGameButton);
 			g.setColor(Color.BLACK);
 			g.drawString("MAX COLOR GAME", this.maxColorGameButton.getBounds().x+10,
-				this.maxColorGameButton.getBounds().y+25);
+					this.maxColorGameButton.getBounds().y+25);
 		}
 		else if(this.gameOn)
 		{
@@ -147,13 +166,17 @@ public class Cubix extends RenderApplet
 			g.fillPolygon(this.mainMenuButton);
 			g.setColor(Color.BLACK);
 			g.drawString("MENU", this.mainMenuButton.getBounds().x+10,
-				this.mainMenuButton.getBounds().y+20);
+					this.mainMenuButton.getBounds().y+20);
 
 			// If there is an active game, call its drawOverlay method too
 			if(this.game != null)
 			{
 				this.game.drawOverlay(g);
+				g.drawImage(img, 420, 360, this);
+				g.fillArc(420,360,90,90,0,this.game.getScore());
+				g.drawString("SCORE METER",420,420);
 			}
+			
 		}
 	}
 

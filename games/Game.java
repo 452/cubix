@@ -2,6 +2,7 @@ package games;
 
 import elements.*;
 import render.*;
+
 import java.awt.*;
 
 public abstract class Game
@@ -27,4 +28,5 @@ public abstract class Game
 	public abstract void disableAudio();
 	public abstract void animate(double time);
 	public abstract void drawOverlay(Graphics g);
+	public abstract int getScore();
 }

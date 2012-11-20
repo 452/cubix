@@ -3347,6 +3347,10 @@ public class Geometry {
    public Material[] getMaterials() {
       return materials;
    }
+   
+   public Material getMaterial(){
+	   return material ;  
+   }
 
    public double[][] getMaterialWeights() {
       return materialWeights;

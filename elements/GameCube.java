@@ -1,5 +1,8 @@
 package elements;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 import render.*;
 
 public class GameCube
@@ -232,5 +235,37 @@ public class GameCube
 				this.m.scale(this.tileThickness, this.tileScaleDimension, this.tileScaleDimension);
 			}
 		}
+	}
+
+	public  int getScore(){
+		return getScore(litColor);
+	}
+
+	
+	/**
+	 * Iterates over all the cubes and returns the number of elements 
+	 * mhich mateches with the given material
+	 * @param m
+	 * @return
+	 */
+	public int getScore(Material m){
+		
+		int score = 0;
+		for(int face = 0; face < this.numFaces; face++)
+		{
+			for(int row = 1; row <= this.dimension; row++)
+			{
+				for(int column = 1; column <= this.dimension; column++)
+				{
+					Material face_material = this.facesArray[face][row][column].getMaterial();
+					if(face_material.equals(m)){
+						score ++;
+					}
+				}
+			}
+		}
+		
+		return score;
+				
 	}
 }

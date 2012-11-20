@@ -162,4 +162,10 @@ public class MaxColorGame extends Game implements ActionListener
 			this.clickTile(face, row, column);
 		}
 	}
+
+	@Override
+	public int getScore() {
+		// TODO Auto-generated method stub
+		return this.cube.getScore();
+	}
 }
