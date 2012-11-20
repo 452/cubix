@@ -23,7 +23,6 @@ public class Cubix extends RenderApplet
 	Polygon maxColorGameButton;
 	Color buttonColor;
 
-	GameCube cube;
 	Game game;
 
 	// Gameplay variables
@@ -39,12 +38,12 @@ public class Cubix extends RenderApplet
 	{
 
 		//String imagePath = getCodeBase()+"background.png";
-		Renderer.setBg("background.png");
 		
 		tr = new MediaTracker(this);
 		img = getImage(getCodeBase(), "score.png");
 		tr.addImage(img,0);
-	
+
+		Renderer.setBg("images/background1.png");
 
 		// Initialize world color and light variables
 		//setBgColor(.7, .7, .9);

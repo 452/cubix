@@ -32,7 +32,7 @@ public class MaxColorGame extends Game implements ActionListener
 		this.world = world;
 		this.audioOn = audioStatus;
 		this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
-			"games/maxColorGame/audio/background.wav");
+			"audio/background1.wav");
 	}
 
 	public void initGame()
@@ -106,7 +106,7 @@ public class MaxColorGame extends Game implements ActionListener
 		if(this.backgroundAudio == null)
 		{
 			this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
-				"games/maxColorGame/audio/background.wav");
+				"audio/background1.wav");
 		}
 
 		this.backgroundAudio.loop();
