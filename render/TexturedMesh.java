@@ -21,6 +21,7 @@ public class TexturedMesh extends Geometry
 
       if (texture == null) {
          try {
+        	
             texture = new Texture(getClass().getResource("../" + fileName), "TexturedMesh");
          } catch (Exception e) { System.err.println(e); }
          names[nTextures] = fileName;

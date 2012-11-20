@@ -26,13 +26,16 @@ public class Cubix extends RenderApplet
 
 	// Gameplay variables
 	boolean introScreenOn = true, gameOn = false, audioOn = true;
-
 	static final int MAX_COLOR_GAME = 0;
 
 	public void initialize()
 	{
+		
+		//String imagePath = getCodeBase()+"background.png";
+		Renderer.setBg("background.png");
+		
 		// Initialize world color and light variables
-		setBgColor(.7, .7, .9);
+		//setBgColor(.7, .7, .9);
 		addLight( 1, 1, 1, .8, .85, 1);
 		addLight(-1,-1,-1, 1, 1, 1);
 
@@ -86,6 +89,7 @@ public class Cubix extends RenderApplet
 			this.game = new games.maxColorGame.MaxColorGame(this, this.getWorld(), this.audioOn);
 			this.game.initGame();
 		}
+		
 	}
 
 	private void stopGame()
@@ -113,6 +117,7 @@ public class Cubix extends RenderApplet
 
 	public void drawOverlay(Graphics g)
 	{
+		
 		// Draw the audio button regardless of status
 		g.setColor(Color.WHITE);
 		g.fillPolygon(this.audioButton);
@@ -120,6 +125,7 @@ public class Cubix extends RenderApplet
 		g.drawString(this.audioOn ? "AUDIO: ON" : "AUDIO: OFF", this.audioButton.getBounds().x+10,
 			this.audioButton.getBounds().y+20);
 
+		
 		// If on the intro screen, draw it
 		if(this.introScreenOn)
 		{
