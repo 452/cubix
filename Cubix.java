@@ -199,6 +199,9 @@ public class Cubix extends RenderApplet
 			if(this.game != null)
 			{
 				this.game.drawOverlay(g);
+
+				// BELOW DRAW SCORE METER SHOULD BE PUSHED TO THE GAME INSTANCE
+				// AS DIFFERENT GAMES WILL IMPLEMENT SCORING DIFFERENTLY
 				g.drawImage(img, 420, 360, this);
 				g.fillArc(420,360,90,90,0,this.game.getScore());
 				g.drawString("SCORE METER",420,420);

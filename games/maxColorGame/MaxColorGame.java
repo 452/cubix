@@ -13,7 +13,7 @@ public class MaxColorGame extends Game implements ActionListener
 {
 	java.applet.Applet app;
 
-	private int level = 1, numCubeDimensions = 6;
+	private int level = 1, numCubeDimensions = 4;
 
 	// Gameplay variables
 	private boolean gameOn = false, gameOver = false, gameWin = false;

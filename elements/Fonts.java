@@ -1,11 +1,3 @@
-/**
- * @(#)Fonts.java
- *
- *
- * @author
- * @version 1.00 2012/11/20
- */
-
 import java.awt.Font;
 
 public class Fonts {

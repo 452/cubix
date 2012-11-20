@@ -9,7 +9,7 @@ public class GameCube
 {
 	Material litColor, unlitColor;
 	Material[] colorArray = new Material[2];
-	int dimension = 5, 	midDimension = this.dimension/2+1;
+	int dimension, 	midDimension;
 	Geometry center;
 	Matrix m;
 	// 3D array of tiles, faces order as follows: front, back, top, bottom, right, left
@@ -19,20 +19,36 @@ public class GameCube
 	private final double tileThickness = 0.01, faceCenterOffset = 1.25;
 	private final int numFaces = 6;
 
+	// Variables to handle concurrency issues
+	private boolean isActive = false;
+	private final Object LOCK = new Object();
+
 	public GameCube(Geometry world, int dimension)
 	{
-		this.center = world.add();
-		this.initialize(dimension);
+		synchronized(this.LOCK)
+		{
+			this.center = world.add();
+			this.initialize(dimension);
+			this.isActive = true;
+		}
 	}
 
-	void initialize(int dimension)
+	void initialize(int d)
 	{
-		this.dimension = dimension;
-		this.midDimension = dimension/2+1;
+		// Ensure number of input dimensions > 0, else default 1
+		if(d > 0)
+		{
+			this.dimension = d;
+			this.midDimension = d/2+1;
+		}
+		else
+		{
+			this.dimension = this.midDimension = 1;
+		}
 
 		// Initialize appropriate cube dimensions
 		this.facesArray = new Geometry[this.numFaces][this.dimension+2][this.dimension+2];
-		this.tileScaleDimension = 1.25/dimension;
+		this.tileScaleDimension = 1.25/this.dimension;
 
 		// Set cube and tile materials
 		this.litColor = new Material();
@@ -109,13 +125,19 @@ public class GameCube
 
 	public void randomizeCubeColors()
 	{
-		for(int face = 0; face < this.numFaces; face++)
+		synchronized(this.LOCK)
 		{
-			for(int row = 1; row <= this.dimension; row++)
+			if(this.isActive)
 			{
-				for(int column = 1; column <= this.dimension; column++)
+				for(int face = 0; face < this.numFaces; face++)
 				{
-					this.facesArray[face][row][column].setMaterial(this.colorArray[(int)(Math.random()*2)]);
+					for(int row = 1; row <= this.dimension; row++)
+					{
+						for(int column = 1; column <= this.dimension; column++)
+						{
+							this.facesArray[face][row][column].setMaterial(this.colorArray[(int)(Math.random()*2)]);
+						}
+					}
 				}
 			}
 		}
@@ -123,25 +145,39 @@ public class GameCube
 
 	public void removeFromWorld(Geometry world)
 	{
-		for(int face = 0; face < this.numFaces; face++)
+		synchronized(this.LOCK)
 		{
-			for(int row = 1; row <= this.dimension; row++)
+			if(this.isActive && world != null)
 			{
-				for(int column = 1; column <= this.dimension; column++)
+				for(int face = 0; face < this.numFaces; face++)
 				{
-					this.center.delete(this.facesArray[face][row][column]);
-					this.facesArray[face][row][column] = null;
+					for(int row = 1; row <= this.dimension; row++)
+					{
+						for(int column = 1; column <= this.dimension; column++)
+						{
+							this.center.delete(this.facesArray[face][row][column]);
+							this.facesArray[face][row][column] = null;
+						}
+					}
 				}
+
+				world.delete(this.center);
+				this.center = null;
+				this.isActive = false;
 			}
 		}
-
-		world.delete(this.center);
-		this.center = null;
 	}
 
 	public Geometry[][] getFace(int faceNum)
 	{
-		return this.facesArray[faceNum];
+		synchronized(this.LOCK)
+		{
+			if(this.isActive)
+			{
+				return this.facesArray[faceNum];
+			}
+		}
+		return null;
 	}
 
 	public int getNumFaces()
@@ -156,12 +192,26 @@ public class GameCube
 
 	public Material getLitColor()
 	{
-		return this.litColor;
+		synchronized(this.LOCK)
+		{
+			if(this.isActive)
+			{
+				return this.litColor;
+			}
+		}
+		return null;
 	}
 
 	public Material getUnlitColor()
 	{
-		return this.unlitColor;
+		synchronized(this.LOCK)
+		{
+			if(this.isActive)
+			{
+				return this.unlitColor;
+			}
+		}
+		return null;
 	}
 
 	// Method to set a tile's material color
@@ -173,83 +223,91 @@ public class GameCube
 
 	public void animate(double time)
 	{
-		this.m = this.center.getMatrix();
-		this.m.identity();
-		//this.m.translate(0, 0, -2);
-
-		// For each tile in the 2d array
-		for(int row = 1; row <= this.dimension; row++)
+		synchronized(this.LOCK)
 		{
-			for(int column = 1; column <= this.dimension; column++)
+			if(this.isActive)
 			{
-				// Get its appropriate x and y coordinates, move and resize each tile
-				stepX = -((double)(this.midDimension-column))/2*5/this.dimension;
-				stepY = -((double)(this.midDimension-row))/2*5/this.dimension;
+				this.m = this.center.getMatrix();
+				this.m.identity();
 
-				if(this.dimension%2 == 0)
+				// For each tile in the faces
+				for(int row = 1; row <= this.dimension; row++)
 				{
-					stepX += this.faceCenterOffset/this.dimension;
-					stepY += this.faceCenterOffset/this.dimension;
+					for(int column = 1; column <= this.dimension; column++)
+					{
+						// Get its appropriate x and y coordinates, move and resize each tile
+						stepX = -((double)(this.midDimension-column))/2*5/this.dimension;
+						stepY = -((double)(this.midDimension-row))/2*5/this.dimension;
+
+						// If the n-number of tiles is even, adjust the offset for no center tile
+						if(this.dimension%2 == 0)
+						{
+							stepX += this.faceCenterOffset/this.dimension;
+							stepY += this.faceCenterOffset/this.dimension;
+						}
+
+						// Set front face
+						Geometry tempGeo = this.facesArray[0][row][column];
+						this.m = tempGeo.getMatrix();
+						this.m.identity();
+						this.m.translate(stepX, stepY, this.faceCenterOffset);
+						this.m.scale(this.tileScaleDimension, this.tileScaleDimension, this.tileThickness);
+
+						// Set back face
+						tempGeo = this.facesArray[1][row][column];
+						this.m = tempGeo.getMatrix();
+						this.m.identity();
+						this.m.translate(stepX, stepY, -this.faceCenterOffset);
+						this.m.scale(this.tileScaleDimension, this.tileScaleDimension, this.tileThickness);
+
+						// Set top face
+						tempGeo = this.facesArray[2][row][column];
+						this.m = tempGeo.getMatrix();
+						this.m.identity();
+						this.m.translate(stepX, this.faceCenterOffset, stepY);
+						this.m.scale(this.tileScaleDimension, this.tileThickness, this.tileScaleDimension);
+
+						// Set bottom face
+						tempGeo = this.facesArray[3][row][column];
+						this.m = tempGeo.getMatrix();
+						this.m.identity();
+						this.m.translate(stepX, -this.faceCenterOffset, stepY);
+						this.m.scale(this.tileScaleDimension, this.tileThickness, this.tileScaleDimension);
+
+						// Set right face
+						tempGeo = this.facesArray[4][row][column];
+						this.m = tempGeo.getMatrix();
+						this.m.identity();
+						this.m.translate(this.faceCenterOffset, stepX, stepY);
+						this.m.scale(this.tileThickness, this.tileScaleDimension, this.tileScaleDimension);
+
+						// Set left face
+						tempGeo = this.facesArray[5][row][column];
+						this.m = tempGeo.getMatrix();
+						this.m.identity();
+						this.m.translate(-this.faceCenterOffset, stepX, stepY);
+						this.m.scale(this.tileThickness, this.tileScaleDimension, this.tileScaleDimension);
+					}
 				}
-
-				// Set front face
-				Geometry tempGeo = this.facesArray[0][row][column];
-				this.m = tempGeo.getMatrix();
-				this.m.identity();
-				this.m.translate(stepX, stepY, this.faceCenterOffset);
-				this.m.scale(this.tileScaleDimension, this.tileScaleDimension, this.tileThickness);
-
-				// Set back face
-				tempGeo = this.facesArray[1][row][column];
-				this.m = tempGeo.getMatrix();
-				this.m.identity();
-				this.m.translate(stepX, stepY, -this.faceCenterOffset);
-				this.m.scale(this.tileScaleDimension, this.tileScaleDimension, this.tileThickness);
-
-				// Set top face
-				tempGeo = this.facesArray[2][row][column];
-				this.m = tempGeo.getMatrix();
-				this.m.identity();
-				this.m.translate(stepX, this.faceCenterOffset, stepY);
-				this.m.scale(this.tileScaleDimension, this.tileThickness, this.tileScaleDimension);
-
-				// Set bottom face
-				tempGeo = this.facesArray[3][row][column];
-				this.m = tempGeo.getMatrix();
-				this.m.identity();
-				this.m.translate(stepX, -this.faceCenterOffset, stepY);
-				this.m.scale(this.tileScaleDimension, this.tileThickness, this.tileScaleDimension);
-
-				// Set right face
-				tempGeo = this.facesArray[4][row][column];
-				this.m = tempGeo.getMatrix();
-				this.m.identity();
-				this.m.translate(this.faceCenterOffset, stepX, stepY);
-				this.m.scale(this.tileThickness, this.tileScaleDimension, this.tileScaleDimension);
-
-				// Set left face
-				tempGeo = this.facesArray[5][row][column];
-				this.m = tempGeo.getMatrix();
-				this.m.identity();
-				this.m.translate(-this.faceCenterOffset, stepX, stepY);
-				this.m.scale(this.tileThickness, this.tileScaleDimension, this.tileScaleDimension);
 			}
 		}
 	}
+
+	// BELOW TWO SCORE METHODS SHOULD BE PUSHED TO EACH GAME INSTANCE
+	// AS DIFFERENT GAMES WILL CALCULATE SCORES BASED ON DIFFERENT LOGIC
 
 	public  int getScore(){
 		return getScore(litColor);
 	}
 
-	
 	/**
-	 * Iterates over all the cubes and returns the number of elements 
+	 * Iterates over all the cubes and returns the number of elements
 	 * mhich mateches with the given material
 	 * @param m
 	 * @return
 	 */
 	public int getScore(Material m){
-		
+
 		int score = 0;
 		for(int face = 0; face < this.numFaces; face++)
 		{
@@ -264,8 +322,7 @@ public class GameCube
 				}
 			}
 		}
-		
+
 		return score;
-				
 	}
 }
