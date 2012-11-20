@@ -123,6 +123,7 @@ public class GameCube
 		}
 	}
 
+	// Randomize this cube's tiles based on Material in its colorArray
 	public void randomizeCubeColors()
 	{
 		synchronized(this.LOCK)
@@ -143,12 +144,15 @@ public class GameCube
 		}
 	}
 
+	// Remove this cube and all its tiles from the passed in world Geometry
 	public void removeFromWorld(Geometry world)
 	{
 		synchronized(this.LOCK)
 		{
 			if(this.isActive && world != null)
 			{
+				this.isActive = false;
+
 				for(int face = 0; face < this.numFaces; face++)
 				{
 					for(int row = 1; row <= this.dimension; row++)
@@ -163,7 +167,6 @@ public class GameCube
 
 				world.delete(this.center);
 				this.center = null;
-				this.isActive = false;
 			}
 		}
 	}
@@ -217,9 +220,11 @@ public class GameCube
 	// Method to set a tile's material color
 	public void setGeometryMaterial(Geometry cg, Material m)
 	{
-		if(cg != null)
+		if(cg != null && m != null)
 			cg.setMaterial(m);
 	}
+
+	Geometry tempGeo;
 
 	public void animate(double time)
 	{
@@ -247,7 +252,7 @@ public class GameCube
 						}
 
 						// Set front face
-						Geometry tempGeo = this.facesArray[0][row][column];
+						tempGeo = this.facesArray[0][row][column];
 						this.m = tempGeo.getMatrix();
 						this.m.identity();
 						this.m.translate(stepX, stepY, this.faceCenterOffset);

@@ -1,3 +1,5 @@
+package elements;
+
 import java.awt.Font;
 
 public class Fonts {
