@@ -1,5 +1,4 @@
 C:\Users\nyu\Documents\GitHub\cubix\Cubix.java
-C:\Users\nyu\Documents\GitHub\cubix\elements\Fonts.java
 C:\Users\nyu\Documents\GitHub\cubix\elements\GameCube.java
 C:\Users\nyu\Documents\GitHub\cubix\games\Game.java
 C:\Users\nyu\Documents\GitHub\cubix\games\maxColorGame\MaxColorGame.java

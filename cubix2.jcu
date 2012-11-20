@@ -18,9 +18,6 @@
 				<path>games\maxColorGame</path>
 			</folderitem>
 			<folderitem>
-				<path>games\maxColorGame\audio</path>
-			</folderitem>
-			<folderitem>
 				<path>render</path>
 			</folderitem>
 			<folderitem>
@@ -28,4 +25,18 @@
 			</folderitem>
 		</project>
 	</projects>
+	<open_files>
+		<docitem>
+			<path>Cubix.java</path>
+			<source>true</source>
+			<index>0</index>
+			<active>false</active>
+		</docitem>
+		<docitem>
+			<path>elements\GameCube.java</path>
+			<source>true</source>
+			<index>1</index>
+			<active>true</active>
+		</docitem>
+	</open_files>
 </workspace_user>

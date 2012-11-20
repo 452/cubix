@@ -30,24 +30,15 @@ public class Cubix extends RenderApplet
 	boolean introScreenOn = true, gameOn = false, audioOn = true;
 	static final int MAX_COLOR_GAME = 0, MATCHING_GAME = 1;
 
-	//Some UI stuff
-	Image img;
-	MediaTracker tr;
-
 	public void initialize()
 	{
-
 		//String imagePath = getCodeBase()+"background.png";
-
-		tr = new MediaTracker(this);
-		img = getImage(getCodeBase(), "score.png");
-		tr.addImage(img,0);
 
 		//Renderer.setBg("images/background1.png");
 		Renderer.setBg("images/background2.jpg");
 
 		// Initialize world color and light variables
-		//setBgColor(.7, .7, .9);
+		setBgColor(.7, .7, .9);
 		addLight( 1, 1, 1, .8, .85, 1);
 		addLight(-1,-1,-1, 1, 1, 1);
 
@@ -152,7 +143,6 @@ public class Cubix extends RenderApplet
 		g.drawString(this.audioOn ? "AUDIO: ON" : "AUDIO: OFF", this.audioButton.getBounds().x+10,
 				this.audioButton.getBounds().y+20);
 
-
 		// If on the intro screen, draw it
 		if(this.introScreenOn)
 		{
@@ -199,14 +189,7 @@ public class Cubix extends RenderApplet
 			if(this.game != null)
 			{
 				this.game.drawOverlay(g);
-
-				// BELOW DRAW SCORE METER SHOULD BE PUSHED TO THE GAME INSTANCE
-				// AS DIFFERENT GAMES WILL IMPLEMENT SCORING DIFFERENTLY
-				g.drawImage(img, 420, 360, this);
-				g.fillArc(420,360,90,90,0,this.game.getScore());
-				g.drawString("SCORE METER",420,420);
 			}
-
 		}
 	}
 

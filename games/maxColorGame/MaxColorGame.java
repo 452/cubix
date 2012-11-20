@@ -26,6 +26,10 @@ public class MaxColorGame extends Game implements ActionListener
 	private Timer timer;
 	private int delay = 2000;
 
+	//Some UI stuff
+	Image img;
+	MediaTracker tr;
+
 	public MaxColorGame(java.applet.Applet app, Geometry world, boolean audioStatus)
 	{
 		this.app = app;
@@ -33,6 +37,10 @@ public class MaxColorGame extends Game implements ActionListener
 		this.audioOn = audioStatus;
 		this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
 			"audio/background1.wav");
+
+		tr = new MediaTracker(this.app);
+		img = this.app.getImage(this.app.getCodeBase(), "images/score.png");
+		tr.addImage(img,0);
 	}
 
 	public void initGame()
@@ -79,18 +87,36 @@ public class MaxColorGame extends Game implements ActionListener
 		//this.gameOn = true;
 	}
 
+	private void initNextLevel()
+	{
+		this.level++;
+		this.numCubeDimensions++;
+		this.delay = this.delay-(this.delay/3);
+
+		this.initLevel();
+	}
+
 	public void clickTile(int face, int row, int column)
 	{
-		Geometry[][] customGeoArray = this.cube.getFace(face);
-		Material currentColor = customGeoArray[row][column].material;
-		// Invert its color
-		customGeoArray[row][column].setMaterial(currentColor == this.cube.getLitColor() ?
-			this.cube.getUnlitColor() : this.cube.getLitColor());
-		// Spread the tile color to the touching side tiles
-		this.cube.setGeometryMaterial(customGeoArray[row-1][column], currentColor);
-		this.cube.setGeometryMaterial(customGeoArray[row+1][column], currentColor);
-		this.cube.setGeometryMaterial(customGeoArray[row][column-1], currentColor);
-		this.cube.setGeometryMaterial(customGeoArray[row][column+1], currentColor);
+		if(this.gameOn)
+		{
+			Geometry[][] customGeoArray = this.cube.getFace(face);
+			Material currentColor = customGeoArray[row][column].material;
+			// Invert its color
+			customGeoArray[row][column].setMaterial(currentColor == this.cube.getLitColor() ?
+				this.cube.getUnlitColor() : this.cube.getLitColor());
+			// Spread the tile color to the touching side tiles
+			this.cube.setGeometryMaterial(customGeoArray[row-1][column], currentColor);
+			this.cube.setGeometryMaterial(customGeoArray[row+1][column], currentColor);
+			this.cube.setGeometryMaterial(customGeoArray[row][column-1], currentColor);
+			this.cube.setGeometryMaterial(customGeoArray[row][column+1], currentColor);
+
+			this.recalculateScore();
+		}
+	}
+
+	private void recalculateScore()
+	{
 	}
 
 	public void toggleAudio(boolean b)
@@ -129,6 +155,11 @@ public class MaxColorGame extends Game implements ActionListener
 
 	public void drawOverlay(Graphics g)
 	{
+		// BELOW DRAW SCORE METER SHOULD BE PUSHED TO THE GAME INSTANCE
+		// AS DIFFERENT GAMES WILL IMPLEMENT SCORING DIFFERENTLY
+		g.drawImage(img, 420, 360, this.app);
+		g.fillArc(420,360,90,90,0,this.getScore());
+		g.drawString("SCORE METER",420,420);
 	}
 
 	void startTimer()
@@ -166,6 +197,9 @@ public class MaxColorGame extends Game implements ActionListener
 	@Override
 	public int getScore() {
 		// TODO Auto-generated method stub
-		return this.cube.getScore();
+		if(this.cube != null)
+			return this.cube.getScore();
+
+		return 0;
 	}
 }

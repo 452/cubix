@@ -36,9 +36,6 @@
 				<path>games\maxColorGame</path>
 			</folderitem>
 			<folderitem>
-				<path>games\maxColorGame\audio</path>
-			</folderitem>
-			<folderitem>
 				<path>render</path>
 			</folderitem>
 			<folderitem>
@@ -63,10 +60,6 @@
 			<fileitem>
 				<path>games\maxColorGame\MaxColorGame.java</path>
 				<folder>games\maxColorGame</folder>
-			</fileitem>
-			<fileitem>
-				<path>games\maxColorGame\audio\background.wav</path>
-				<folder>games\maxColorGame\audio</folder>
 			</fileitem>
 			<fileitem>
 				<path>render\Curve.java</path>
