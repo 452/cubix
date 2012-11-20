@@ -21,16 +21,16 @@ public class Cubix extends RenderApplet
 	Polygon audioButton;
 	Polygon mainMenuButton;
 	Polygon maxColorGameButton;
+	Polygon matchingGameButton;
 	Color buttonColor;
 
 	Game game;
 
 	// Gameplay variables
 	boolean introScreenOn = true, gameOn = false, audioOn = true;
-	static final int MAX_COLOR_GAME = 0;
+	static final int MAX_COLOR_GAME = 0, MATCHING_GAME = 1;
 
-	//Some UI stuff 
-	private Font bigFont = new Font("Helvetica", Font.BOLD,40);
+	//Some UI stuff
 	Image img;
 	MediaTracker tr;
 
@@ -38,12 +38,13 @@ public class Cubix extends RenderApplet
 	{
 
 		//String imagePath = getCodeBase()+"background.png";
-		
+
 		tr = new MediaTracker(this);
 		img = getImage(getCodeBase(), "score.png");
 		tr.addImage(img,0);
 
-		Renderer.setBg("images/background1.png");
+		//Renderer.setBg("images/background1.png");
+		Renderer.setBg("images/background2.jpg");
 
 		// Initialize world color and light variables
 		//setBgColor(.7, .7, .9);
@@ -70,10 +71,17 @@ public class Cubix extends RenderApplet
 
 		// Initialize the max color game button
 		this.maxColorGameButton = new Polygon();
-		this.maxColorGameButton.addPoint(250, 260);
-		this.maxColorGameButton.addPoint(380, 260);
-		this.maxColorGameButton.addPoint(380, 300);
-		this.maxColorGameButton.addPoint(250, 300);
+		this.maxColorGameButton.addPoint(250, 150);
+		this.maxColorGameButton.addPoint(380, 150);
+		this.maxColorGameButton.addPoint(380, 190);
+		this.maxColorGameButton.addPoint(250, 190);
+
+		// Initialize the matching game button
+		this.matchingGameButton = new Polygon();
+		this.matchingGameButton.addPoint(250, 210);
+		this.matchingGameButton.addPoint(380, 210);
+		this.matchingGameButton.addPoint(380, 250);
+		this.matchingGameButton.addPoint(250, 250);
 
 		// Call method to set up the intro/main screen
 		this.initializeIntroScreen();
@@ -99,6 +107,14 @@ public class Cubix extends RenderApplet
 			this.gameOn = true;
 			this.game = new games.maxColorGame.MaxColorGame(this, this.getWorld(), this.audioOn);
 			this.game.initGame();
+		}
+		else if(gameNum == MATCHING_GAME)
+		{
+			this.gameOn = true;
+
+			// INSERT CODE TO START MATCHING GAME HERE !!!
+			// this.game = new games.matchingGame.MatchingGame(this, this.getWorld(), this.audioOn);
+			// this.game.initGame();
 		}
 
 	}
@@ -128,11 +144,11 @@ public class Cubix extends RenderApplet
 
 	public void drawOverlay(Graphics g)
 	{
-
 		// Draw the audio button regardless of status
 		g.setColor(Color.WHITE);
 		g.fillPolygon(this.audioButton);
 		g.setColor(Color.BLACK);
+		g.setFont(Fonts.TINY_FONT);
 		g.drawString(this.audioOn ? "AUDIO: ON" : "AUDIO: OFF", this.audioButton.getBounds().x+10,
 				this.audioButton.getBounds().y+20);
 
@@ -144,19 +160,31 @@ public class Cubix extends RenderApplet
 			int centerWidth = this.getWidth()/2;
 			int centerHeight = this.getHeight()/2;
 
+			// Draw main cubix text
 			Font saveOld = g.getFont();
 			g.setColor(Color.BLUE);
-			g.setFont(bigFont);
-			g.drawString("CUBIX",centerWidth-60,150);
-			g.setFont(saveOld);
-
+			g.setFont(Fonts.BIG_FONT);
+			g.drawString("CUBIX",centerWidth-70, 50);
+			g.setFont(Fonts.SMALL_FONT);
+			g.drawString("A collection of games based on a 3D cube", centerWidth-200, 80);
 
 			// Draw the max color game button
 			g.setColor(Color.WHITE);
 			g.fillPolygon(this.maxColorGameButton);
 			g.setColor(Color.BLACK);
+			g.setFont(Fonts.TINY_FONT);
 			g.drawString("MAX COLOR GAME", this.maxColorGameButton.getBounds().x+10,
 					this.maxColorGameButton.getBounds().y+25);
+
+			// Draw the matching game button
+			g.setColor(Color.WHITE);
+			g.fillPolygon(this.matchingGameButton);
+			g.setColor(Color.BLACK);
+			g.setFont(Fonts.TINY_FONT);
+			g.drawString("MATCHING GAME", this.matchingGameButton.getBounds().x+15,
+					this.matchingGameButton.getBounds().y+25);
+
+			g.setFont(saveOld);
 		}
 		else if(this.gameOn)
 		{
@@ -164,7 +192,7 @@ public class Cubix extends RenderApplet
 			g.setColor(this.buttonColor);
 			g.fillPolygon(this.mainMenuButton);
 			g.setColor(Color.BLACK);
-			g.drawString("MENU", this.mainMenuButton.getBounds().x+10,
+			g.drawString("MENU", this.mainMenuButton.getBounds().x+15,
 					this.mainMenuButton.getBounds().y+20);
 
 			// If there is an active game, call its drawOverlay method too
@@ -175,7 +203,7 @@ public class Cubix extends RenderApplet
 				g.fillArc(420,360,90,90,0,this.game.getScore());
 				g.drawString("SCORE METER",420,420);
 			}
-			
+
 		}
 	}
 
@@ -219,6 +247,11 @@ public class Cubix extends RenderApplet
 			{
 				this.introScreenOn = false;
 				this.initGame(this.MAX_COLOR_GAME);
+			}
+			else if(this.matchingGameButton.contains(x, y))
+			{
+				this.introScreenOn = false;
+				this.initGame(this.MATCHING_GAME);
 			}
 
 			return true;
