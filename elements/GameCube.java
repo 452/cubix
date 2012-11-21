@@ -2,7 +2,6 @@ package elements;
 
 import java.awt.Color;
 import java.awt.Graphics;
-
 import render.*;
 
 public class GameCube
@@ -56,7 +55,6 @@ public class GameCube
 				for(int column = 1; column <= this.dimension; column++)
 				{
 					Geometry tempGeo = this.center.add().cube();
-					//tempGeo.setMaterial(this.colorArray[0]);
 					tempGeo.setFace(face);
 					tempGeo.setPositionRow(row);
 					tempGeo.setPositionColumn(column);
