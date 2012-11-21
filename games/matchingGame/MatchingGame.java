@@ -105,8 +105,37 @@ public class MatchingGame extends Game implements ActionListener
 		}
 	}
 
+	Color tempColor;
+	Font tempFont;
+
 	public void drawOverlay(Graphics g)
 	{
+		// Store font and color already in the system
+		this.tempColor = g.getColor();
+		this.tempFont = g.getFont();
+
+		// If game is over, draw the message
+		if(this.gameOver)
+		{
+			g.setColor(Color.RED);
+			g.setFont(Fonts.BIG_FONT);
+			g.drawString("GAME OVER", 220, 200);
+			g.drawString((this.gameWin ? "YOU WIN!" : "YOU LOSE!"), 240, 250);
+		}
+
+		g.setColor(Color.BLUE);
+		g.setFont(Fonts.SMALL_FONT);
+
+		// Draw the top level text
+		g.drawString("MATCHING GAME SUPREMUS", 170, 30);
+
+		g.setFont(Fonts.TINY_FONT);
+		g.drawString("Click on two unexposed black tiles to expose their colors", 150, 45);
+		g.drawString("Click on a third unexposed tile to complete the match or close out the tiles", 100, 60);
+		g.drawString("Match all colored tiles and you win!", 210, 75);
+
+		g.setFont(tempFont);
+		g.setColor(tempColor);
 	}
 
 	// Action to perform - ActionListener implementation

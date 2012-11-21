@@ -6,6 +6,9 @@ import render.*;
 
 public class GameCube
 {
+	// !!! GAME CUBE FACE DIMENSIONS RANGE FROM 1 TO NUMBER OF DIMENSIONS !!!
+	// !!! DOES NOT BEGIN WITH 0 !!!
+
 	private int dimension, 	midDimension;
 	private Geometry center;
 	private Matrix m;
