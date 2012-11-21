@@ -46,8 +46,6 @@ public class MaxColorGame extends Game
 		this.app = app;
 		this.world = world;
 		this.audioOn = audioStatus;
-		this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
-			"audio/background1.wav");
 
 		// Set cube and tile materials
 		this.playerMaterial = new Material();

@@ -26,8 +26,6 @@ public class MatchingGame extends Game implements ActionListener
 		this.app = app;
 		this.world = world;
 		this.audioOn = audioStatus;
-		this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
-			"audio/background1.wav");
 	}
 
 	public void initGame()
@@ -84,7 +82,7 @@ public class MatchingGame extends Game implements ActionListener
 		if(this.backgroundAudio == null)
 		{
 			this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
-				"audio/background1.wav");
+				"audio/background2.wav");
 		}
 
 		this.backgroundAudio.loop();
