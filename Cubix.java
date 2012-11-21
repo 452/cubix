@@ -102,10 +102,8 @@ public class Cubix extends RenderApplet
 		else if(gameNum == MATCHING_GAME)
 		{
 			this.gameOn = true;
-
-			// INSERT CODE TO START MATCHING GAME HERE !!!
-			// this.game = new games.matchingGame.MatchingGame(this, this.getWorld(), this.audioOn);
-			// this.game.initGame();
+			this.game = new games.matchingGame.MatchingGame(this, this.getWorld(), this.audioOn);
+			this.game.initGame();
 		}
 
 	}
