@@ -7,14 +7,12 @@ import render.*;
 
 public class GameCube
 {
-	Material litColor, unlitColor;
-	Material[] colorArray = new Material[2];
-	int dimension, 	midDimension;
-	Geometry center;
-	Matrix m;
+	private int dimension, 	midDimension;
+	private Geometry center;
+	private Matrix m;
 	// 3D array of tiles, faces order as follows: front, back, top, bottom, right, left
-	Geometry[][][] facesArray;
-	double tileScaleDimension, stepX, stepY;
+	private Geometry[][][] facesArray;
+	private double tileScaleDimension, stepX, stepY;
 	// Below variables should never change
 	private final double tileThickness = 0.01, faceCenterOffset = 1.25;
 	private final int numFaces = 6;
@@ -33,7 +31,7 @@ public class GameCube
 		}
 	}
 
-	void initialize(int d)
+	private void initialize(int d)
 	{
 		// Ensure number of input dimensions > 0, else default 1
 		if(d > 0)
@@ -50,20 +48,6 @@ public class GameCube
 		this.facesArray = new Geometry[this.numFaces][this.dimension+2][this.dimension+2];
 		this.tileScaleDimension = 1.25/this.dimension;
 
-		// Set cube and tile materials
-		this.litColor = new Material();
-		this.litColor.setAmbient(0.7, 0.7, 0.7);
-		this.litColor.setDiffuse(0.8, 0.8, 0.8);
-		this.litColor.setSpecular(0.9, 0.9, 0.9, 10);
-
-		this.unlitColor = new Material();
-		this.unlitColor.setAmbient(0.1, 0.1, 0.1);
-		this.unlitColor.setDiffuse(0.2, 0.2, 0.2);
-		this.unlitColor.setSpecular(.5, .5, .5, 10);
-
-		this.colorArray[0] = this.litColor;
-		this.colorArray[1] = this.unlitColor;
-
 		// Initialize all tiles for each face of the 3D cube
 		for(int face = 0; face < this.numFaces; face++)
 		{
@@ -72,7 +56,7 @@ public class GameCube
 				for(int column = 1; column <= this.dimension; column++)
 				{
 					Geometry tempGeo = this.center.add().cube();
-					tempGeo.setMaterial(this.colorArray[0]);
+					//tempGeo.setMaterial(this.colorArray[0]);
 					tempGeo.setFace(face);
 					tempGeo.setPositionRow(row);
 					tempGeo.setPositionColumn(column);
@@ -120,27 +104,6 @@ public class GameCube
 			this.facesArray[5][dim][this.dimension+1] = this.facesArray[2][dim][1];
 			this.facesArray[5][dim][0] = this.facesArray[3][dim][1];
 			this.facesArray[5][0][dim] = this.facesArray[1][dim][1];
-		}
-	}
-
-	// Randomize this cube's tiles based on Material in its colorArray
-	public void randomizeCubeColors()
-	{
-		synchronized(this.LOCK)
-		{
-			if(this.isActive)
-			{
-				for(int face = 0; face < this.numFaces; face++)
-				{
-					for(int row = 1; row <= this.dimension; row++)
-					{
-						for(int column = 1; column <= this.dimension; column++)
-						{
-							this.facesArray[face][row][column].setMaterial(this.colorArray[(int)(Math.random()*2)]);
-						}
-					}
-				}
-			}
 		}
 	}
 
@@ -193,38 +156,17 @@ public class GameCube
 		return this.dimension;
 	}
 
-	public Material getLitColor()
-	{
-		synchronized(this.LOCK)
-		{
-			if(this.isActive)
-			{
-				return this.litColor;
-			}
-		}
-		return null;
-	}
-
-	public Material getUnlitColor()
-	{
-		synchronized(this.LOCK)
-		{
-			if(this.isActive)
-			{
-				return this.unlitColor;
-			}
-		}
-		return null;
-	}
-
 	// Method to set a tile's material color
-	public void setGeometryMaterial(Geometry cg, Material m)
+	public void setTileMaterial(int face, int row, int col, Material m)
 	{
-		if(cg != null && m != null)
-			cg.setMaterial(m);
+		synchronized(this.LOCK)
+		{
+			if(this.isActive && this.facesArray[face][row][col] != null && m != null)
+				this.facesArray[face][row][col].setMaterial(m);
+		}
 	}
 
-	Geometry tempGeo;
+	private Geometry tempGeo;
 
 	public void animate(double time)
 	{
@@ -296,38 +238,5 @@ public class GameCube
 				}
 			}
 		}
-	}
-
-	// BELOW TWO SCORE METHODS SHOULD BE PUSHED TO EACH GAME INSTANCE
-	// AS DIFFERENT GAMES WILL CALCULATE SCORES BASED ON DIFFERENT LOGIC
-
-	public  int getScore(){
-		return getScore(litColor);
-	}
-
-	/**
-	 * Iterates over all the cubes and returns the number of elements
-	 * mhich mateches with the given material
-	 * @param m
-	 * @return
-	 */
-	public int getScore(Material m){
-
-		int score = 0;
-		for(int face = 0; face < this.numFaces; face++)
-		{
-			for(int row = 1; row <= this.dimension; row++)
-			{
-				for(int column = 1; column <= this.dimension; column++)
-				{
-					Material face_material = this.facesArray[face][row][column].getMaterial();
-					if(face_material.equals(m)){
-						score ++;
-					}
-				}
-			}
-		}
-
-		return score;
 	}
 }

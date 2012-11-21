@@ -13,9 +13,12 @@ public class MaxColorGame extends Game implements ActionListener
 {
 	java.applet.Applet app;
 
-	private int level = 1, numCubeDimensions = 4;
+	// Cube variables
+	Material litColor, unlitColor;
+	Material[] colorArray = new Material[2];
 
 	// Gameplay variables
+	private int level = 1, numCubeDimensions = 4;
 	private boolean gameOn = false, gameOver = false, gameWin = false;
 
 	// Audio variables
@@ -37,6 +40,20 @@ public class MaxColorGame extends Game implements ActionListener
 		this.audioOn = audioStatus;
 		this.backgroundAudio = this.app.getAudioClip(this.app.getCodeBase(),
 			"audio/background1.wav");
+
+		// Set cube and tile materials
+		this.litColor = new Material();
+		this.litColor.setAmbient(0.7, 0.7, 0.7);
+		this.litColor.setDiffuse(0.8, 0.8, 0.8);
+		this.litColor.setSpecular(0.9, 0.9, 0.9, 10);
+
+		this.unlitColor = new Material();
+		this.unlitColor.setAmbient(0.1, 0.1, 0.1);
+		this.unlitColor.setDiffuse(0.2, 0.2, 0.2);
+		this.unlitColor.setSpecular(.5, .5, .5, 10);
+
+		this.colorArray[0] = this.litColor;
+		this.colorArray[1] = this.unlitColor;
 
 		tr = new MediaTracker(this.app);
 		img = this.app.getImage(this.app.getCodeBase(), "images/score.png");
@@ -79,7 +96,7 @@ public class MaxColorGame extends Game implements ActionListener
 		// Re-create the cube
 		this.cube = new GameCube(world, this.numCubeDimensions);
 		// Call method to randomize the cube tile colors
-		this.cube.randomizeCubeColors();
+		this.randomizeCubeColors();
 
 		// Call method to start timer and related timed actions (for computer actions)
 		this.startTimer();
@@ -96,6 +113,26 @@ public class MaxColorGame extends Game implements ActionListener
 		this.initLevel();
 	}
 
+
+
+	// Randomize this cube's tiles based on Material in colorArray
+	public void randomizeCubeColors()
+	{
+		if(this.cube != null)
+		{
+			for(int face = 0; face < this.cube.getNumFaces(); face++)
+			{
+				for(int row = 1; row <= this.cube.getDimension(); row++)
+				{
+					for(int column = 1; column <= this.cube.getDimension(); column++)
+					{
+						this.cube.setTileMaterial(face, row, column, this.colorArray[(int)(Math.random()*2)]);
+					}
+				}
+			}
+		}
+	}
+
 	public void clickTile(int face, int row, int column)
 	{
 		if(this.gameOn)
@@ -103,13 +140,13 @@ public class MaxColorGame extends Game implements ActionListener
 			Geometry[][] customGeoArray = this.cube.getFace(face);
 			Material currentColor = customGeoArray[row][column].material;
 			// Invert its color
-			customGeoArray[row][column].setMaterial(currentColor == this.cube.getLitColor() ?
-				this.cube.getUnlitColor() : this.cube.getLitColor());
+			customGeoArray[row][column].setMaterial(currentColor == this.litColor ?
+				this.unlitColor : this.litColor);
 			// Spread the tile color to the touching side tiles
-			this.cube.setGeometryMaterial(customGeoArray[row-1][column], currentColor);
-			this.cube.setGeometryMaterial(customGeoArray[row+1][column], currentColor);
-			this.cube.setGeometryMaterial(customGeoArray[row][column-1], currentColor);
-			this.cube.setGeometryMaterial(customGeoArray[row][column+1], currentColor);
+			this.cube.setTileMaterial(face, row-1, column, currentColor);
+			this.cube.setTileMaterial(face, row+1, column, currentColor);
+			this.cube.setTileMaterial(face, row, column-1, currentColor);
+			this.cube.setTileMaterial(face, row, column+1, currentColor);
 
 			this.recalculateScore();
 		}
@@ -155,8 +192,7 @@ public class MaxColorGame extends Game implements ActionListener
 
 	public void drawOverlay(Graphics g)
 	{
-		// BELOW DRAW SCORE METER SHOULD BE PUSHED TO THE GAME INSTANCE
-		// AS DIFFERENT GAMES WILL IMPLEMENT SCORING DIFFERENTLY
+		// Draw score meter
 		g.drawImage(img, 420, 360, this.app);
 		g.fillArc(420,360,90,90,0,this.getScore());
 		g.drawString("SCORE METER",420,420);
@@ -196,10 +232,26 @@ public class MaxColorGame extends Game implements ActionListener
 
 	@Override
 	public int getScore() {
-		// TODO Auto-generated method stub
-		if(this.cube != null)
-			return this.cube.getScore();
+		int score = 0;
 
-		return 0;
+		if(this.cube != null)
+		{
+			for(int face = 0; face < this.cube.getNumFaces(); face++)
+			{
+				for(int row = 1; row <= this.cube.getDimension(); row++)
+				{
+					for(int column = 1; column <= this.cube.getDimension(); column++)
+					{
+						if(this.cube.getFace(face)[row][column] != null &&
+							this.litColor.equals(this.cube.getFace(face)[row][column].getMaterial()))
+						{
+							score++;
+						}
+					}
+				}
+			}
+		}
+
+		return score;
 	}
 }
