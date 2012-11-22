@@ -9,19 +9,19 @@ public class GameCube
 	// !!! GAME CUBE FACE DIMENSIONS RANGE FROM 1 TO NUMBER OF DIMENSIONS !!!
 	// !!! DOES NOT BEGIN WITH 0 !!!
 
-	private int dimension, 	midDimension;
-	private Geometry center;
-	private Matrix m;
+	protected int dimension, 	midDimension;
+	protected Geometry center;
+	protected Matrix m;
 	// 3D array of tiles, faces order as follows: front, back, top, bottom, right, left
-	private Geometry[][][] facesArray;
-	private double tileScaleDimension, stepX, stepY;
+	protected Geometry[][][] facesArray;
+	protected double tileScaleDimension, stepX, stepY;
 	// Below variables should never change
-	private final double tileThickness = 0.01, faceCenterOffset = 1.25;
-	private final int numFaces = 6;
+	protected final double tileThickness = 0.01, faceCenterOffset = 1.25;
+	protected final int numFaces = 6;
 
 	// Variables to handle concurrency issues
-	private boolean isActive = false;
-	private final Object LOCK = new Object();
+	protected boolean isActive = false;
+	protected final Object LOCK = new Object();
 
 	public GameCube(Geometry world, int dimension)
 	{
@@ -167,7 +167,7 @@ public class GameCube
 		}
 	}
 
-	private Geometry tempGeo;
+	protected Geometry tempGeo;
 
 	public void animate(double time)
 	{

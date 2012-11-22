@@ -6,6 +6,9 @@ C:\Users\nyu\Documents\GitHub\cubix\games\Game.java
 C:\Users\nyu\Documents\GitHub\cubix\games\maxColorGame\MaxColorGame.java
 C:\Users\nyu\Documents\GitHub\cubix\games\matchingGame\MatchingCube.java
 C:\Users\nyu\Documents\GitHub\cubix\games\matchingGame\MatchingGame.java
+C:\Users\nyu\Documents\GitHub\cubix\games\matchingpattern\MatchingPatternCube.java
+C:\Users\nyu\Documents\GitHub\cubix\games\matchingpattern\PatternMatchingGame.java
+C:\Users\nyu\Documents\GitHub\cubix\games\matchingpattern\Window.java
 C:\Users\nyu\Documents\GitHub\cubix\render\Curve.java
 C:\Users\nyu\Documents\GitHub\cubix\render\CurveProduct.java
 C:\Users\nyu\Documents\GitHub\cubix\render\Geometry.java

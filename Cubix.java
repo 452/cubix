@@ -22,13 +22,14 @@ public class Cubix extends RenderApplet
 	Polygon mainMenuButton;
 	Polygon maxColorGameButton;
 	Polygon matchingGameButton;
+	Polygon imageGameButton;
 	Color buttonColor;
 
 	Game game;
 
 	// Gameplay variables
 	boolean introScreenOn = true, gameOn = false, audioOn = true;
-	static final int MAX_COLOR_GAME = 0, MATCHING_GAME = 1;
+	static final int MAX_COLOR_GAME = 0, MATCHING_GAME = 1, IMAGE_MATCHING = 2;
 
 	public void initialize()
 	{
@@ -41,6 +42,9 @@ public class Cubix extends RenderApplet
 		setBgColor(.7, .7, .9);
 		addLight( 1, 1, 1, .8, .85, 1);
 		addLight(-1,-1,-1, 1, 1, 1);
+		//addLight(1,1,1, 1, 1, 1);
+		addLight(1,-1,-1, 1, 1, 1);
+		addLight(1,1,-1, 1, 1, 1);
 
 		// Set button color
 		this.buttonColor = Color.WHITE;
@@ -74,6 +78,13 @@ public class Cubix extends RenderApplet
 		this.matchingGameButton.addPoint(380, 250);
 		this.matchingGameButton.addPoint(250, 250);
 
+		// Initialize the matching game button
+		this.imageGameButton = new Polygon();
+		this.imageGameButton.addPoint(250, 270);
+		this.imageGameButton.addPoint(380, 270);
+		this.imageGameButton.addPoint(380, 310);
+		this.imageGameButton.addPoint(250, 310);
+
 		// Call method to set up the intro/main screen
 		this.initializeIntroScreen();
 	}
@@ -103,6 +114,12 @@ public class Cubix extends RenderApplet
 		{
 			this.gameOn = true;
 			this.game = new games.matchingGame.MatchingGame(this, this.getWorld(), this.audioOn);
+			this.game.initGame();
+		}
+		else if(gameNum == IMAGE_MATCHING)
+		{
+			this.gameOn = true;
+			this.game = new games.matchingpattern.PatternMatchingGame(this, this.getWorld(), this.audioOn);
 			this.game.initGame();
 		}
 
@@ -172,6 +189,15 @@ public class Cubix extends RenderApplet
 			g.drawString("MATCHING GAME", this.matchingGameButton.getBounds().x+15,
 					this.matchingGameButton.getBounds().y+25);
 
+
+			// Draw the matching game button
+			g.setColor(Color.WHITE);
+			g.fillPolygon(this.imageGameButton);
+			g.setColor(Color.BLACK);
+			g.setFont(Fonts.TINY_FONT);
+			g.drawString("IMAGE MATCHING", this.imageGameButton.getBounds().x+15,
+					this.imageGameButton.getBounds().y+25);
+
 			g.setFont(saveOld);
 		}
 		else if(this.gameOn)
@@ -236,6 +262,10 @@ public class Cubix extends RenderApplet
 			{
 				this.introScreenOn = false;
 				this.initGame(this.MATCHING_GAME);
+			}else if(this.imageGameButton.contains(x, y))
+			{
+				this.introScreenOn = false;
+				this.initGame(this.IMAGE_MATCHING);
 			}
 
 			return true;
