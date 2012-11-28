@@ -41,6 +41,10 @@ public class PatternMatchingGame extends Game {
 	List<Window> images = new ArrayList<Window>();
 	boolean isTimerOn = false;
 
+	MatchingPatternCube mirrorCube;
+
+	int currentLevel = 1;
+
 	// Loaded constructor
 	public PatternMatchingGame(java.applet.Applet app, Geometry world, boolean audioStatus)
 	{
@@ -57,7 +61,6 @@ public class PatternMatchingGame extends Game {
 		this.defaultMaterial.setDiffuse(0.8, 0.8, 0.8);
 		this.defaultMaterial.setSpecular(0.9, 0.9, 0.9, 10);
 
-
 	}
 
 
@@ -72,7 +75,6 @@ public class PatternMatchingGame extends Game {
 					for(int column = 1; column <= this.cube.getDimension(); column++)
 					{
 						this.cube.setTileMaterial(face, row, column, defaultMaterial);
-
 						((MatchingPatternCube)this.cube).showMeshOnFace(face, row, column,"images/match/background.png");
 					}
 				}
@@ -94,6 +96,7 @@ public class PatternMatchingGame extends Game {
 	public void initLevel() {
 
 		playerScore = 0;
+		currentLevel++;
 
 		// If already a cube, clear it out
 		if(this.cube != null)
@@ -101,14 +104,20 @@ public class PatternMatchingGame extends Game {
 			this.deleteCubeFromWorld();
 		}
 		// Re-create the cube
-		this.cube = new MatchingPatternCube(world, this.numCubeDimensions);
-		initializeWindowObjects();
-		coverCubeWithBGImage();
-		this.gameOn = true;
+		if(currentLevel == 1){
+			this.cube = new MatchingPatternCube(world, this.numCubeDimensions);
+			initializeWindowObjects();
+			coverCubeWithBGImage();
+			this.gameOn = true;
+		}else if(currentLevel == 2){
+			this.cube = new MatchingPatternCube(world, this.numCubeDimensions+1);
+			initializeWindowObjects();
+			coverCubeWithBGImage();
+			this.gameOn = true;
+		}
 	}
 
 	private void initializeWindowObjects() {
-
 
 		if(this.cube != null)
 		{
@@ -123,21 +132,33 @@ public class PatternMatchingGame extends Game {
 				}
 			}
 		}
+
 		Collections.shuffle(images);
 
 		int counter = 1;
 
-		for(int i = 0; i<images.size();i= i+2){
+		for(int i = 0; i<images.size();){
 
-			images.get(i).imageId = counter+".png";
-			images.get(i+1).imageId = counter+".png";
+			if(counter <= 12){
+				images.get(i).imageId = counter+".png";
+				images.get(i+1).imageId = counter+".png";
+				i= i+2;
+			}else{
+				images.get(i).imageId = "default.png";
+				i++;
+			}
 			counter++;
-
 		}
 
-		for(int i = 1; i<=24;i=i+2){
-			images.get(i-1).matchingpair = images.get(i);
-			images.get(i).matchingpair = images.get(i-1);
+		for(int i = 0; i< images.size();){
+			if(i < 24){
+				images.get(i).matchingpair = images.get(i+1);
+				images.get(i+1).matchingpair = images.get(i);
+				i=i+2;
+			}else{
+				images.get(i).matchingpair = null;
+				i++;
+			}
 		}
 	}
 
@@ -163,7 +184,6 @@ public class PatternMatchingGame extends Game {
 
 		if(this.gameOn && getOpenImages() < 2 )
 		{
-
 			// Spread the tile color to the touching side tiles
 			for(Window w:images){
 
@@ -174,9 +194,11 @@ public class PatternMatchingGame extends Game {
 						((MatchingPatternCube)this.cube).showMeshOnFace(face, row, column,"images/match/"+w.imageId);
 						w.isOpen = true;
 
-						if(w.isOpen && w.matchingpair.isOpen){
-							w.isDiscovered = true;
-							w.matchingpair.isDiscovered = true;
+						if(w.matchingpair != null){
+							if(w.isOpen && w.matchingpair.isOpen){
+								w.isDiscovered = true;
+								w.matchingpair.isDiscovered = true;
+							}
 						}
 
 
@@ -188,6 +210,9 @@ public class PatternMatchingGame extends Game {
 								public void run() {
 									isTimerOn = false;
 									refreshAllCubes();
+									if(islevelOver()){
+										initLevel();
+									}
 								}
 							},5000);
 						}
@@ -237,6 +262,15 @@ public class PatternMatchingGame extends Game {
 				}
 			}
 		}
+	}
+
+	public boolean islevelOver(){
+		for(Window w:images){
+			if(!w.isDiscovered){
+				return false;
+			}
+		}
+		return true;
 	}
 
 

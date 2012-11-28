@@ -7,6 +7,7 @@ public class Window {
 	boolean isDiscovered = false;
 	String imageId;
 	boolean isOpen =false;
+	MatchingPatternCube owner;
 	
 	public Window(int face,int row , int col){
 		this.face = face;

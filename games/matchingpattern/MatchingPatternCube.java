@@ -17,7 +17,7 @@ public class MatchingPatternCube extends GameCube {
 			{
 				this.m = this.center.getMatrix();
 				this.m.identity();
-
+				
 				// For each tile in the faces
 				for(int row = 1; row <= this.dimension; row++)
 				{
@@ -93,5 +93,7 @@ public class MatchingPatternCube extends GameCube {
 	{
 		 this.facesArray[face][row][col].mesh(1,1, filename);
 	}
+	
+	
 		
 }
