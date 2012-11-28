@@ -43,7 +43,7 @@ public class PatternMatchingGame extends Game {
 
 	MatchingPatternCube mirrorCube;
 
-	int currentLevel = 1;
+	int currentLevel = 0;
 
 	// Loaded constructor
 	public PatternMatchingGame(java.applet.Applet app, Geometry world, boolean audioStatus)
