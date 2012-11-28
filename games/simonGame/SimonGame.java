@@ -146,6 +146,10 @@ public class SimonGame extends Game
 			this.dingAudio.stop();
 			this.dingAudio = null;
 		}
+		if(this.keyboard != null)
+		{
+			this.keyboard.stop();
+		}
 	}
 
 	// Method to initialize a game level
@@ -195,11 +199,12 @@ public class SimonGame extends Game
 	public void clickTile(int face, int row, int column)
 	{
 		if(this.gameOn && this.userEnabled)
-		{
+		{((SimonCube)this.cube).setFaceHit(face);
 			if(face == this.repeatArray[this.currentIndex+1])
 			{
 				//this.dingAudio.play();
 				this.keyboard.addNote(this.notesArray[this.repeatArray[this.currentIndex+1]]);
+
 				if(++this.currentIndex == this.repeatIndex)
 				{
 					this.userEnabled = false;

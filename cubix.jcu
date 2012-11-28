@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<workspace_user>
+	<active_project>
+		<label>cubix</label>
+	</active_project>
+	<projects>
+		<project>
+			<label>cubix</label>
+			<showfiles>false</showfiles>
+			<folderitem>
+				<path>elements</path>
+			</folderitem>
+			<folderitem>
+				<path>games</path>
+			</folderitem>
+			<folderitem>
+				<path>games\maxColorGame</path>
+			</folderitem>
+			<folderitem>
+				<path>games\matchingGame</path>
+			</folderitem>
+			<folderitem>
+				<path>games\matchingpattern</path>
+			</folderitem>
+			<folderitem>
+				<path>render</path>
+			</folderitem>
+			<folderitem>
+				<path>render\surface</path>
+			</folderitem>
+		</project>
+	</projects>
+</workspace_user>
