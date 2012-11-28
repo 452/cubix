@@ -49,8 +49,8 @@ public class Cubix extends RenderApplet
 		addLight( 1, 1, 1, .8, .85, 1);
 		addLight(-1,-1,-1, 1, 1, 1);
 		//addLight(1,1,1, 1, 1, 1);
-		//addLight(1,-1,-1, 1, 1, 1);
-		//addLight(1,1,-1, 1, 1, 1);
+		addLight(1,-1,-1, 1, 1, 1);
+		addLight(1,1,-1, 1, 1, 1);
 
 		// Set button color
 		this.buttonColor = Color.WHITE;

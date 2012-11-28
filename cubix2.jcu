@@ -34,4 +34,12 @@
 			</folderitem>
 		</project>
 	</projects>
+	<open_files>
+		<docitem>
+			<path>Cubix.java</path>
+			<source>true</source>
+			<index>0</index>
+			<active>true</active>
+		</docitem>
+	</open_files>
 </workspace_user>
