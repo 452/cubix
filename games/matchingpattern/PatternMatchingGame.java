@@ -199,6 +199,8 @@ public class PatternMatchingGame extends Game {
 								w.isDiscovered = true;
 								w.matchingpair.isDiscovered = true;
 							}
+						}else{
+							w.isDiscovered = true;
 						}
 
 
@@ -214,7 +216,7 @@ public class PatternMatchingGame extends Game {
 										initLevel();
 									}
 								}
-							},5000);
+							},1000);
 						}
 
 					}
@@ -267,7 +269,7 @@ public class PatternMatchingGame extends Game {
 	public boolean islevelOver(){
 		for(Window w:images){
 			if(!w.isDiscovered){
-				return false;
+				//return false;
 			}
 		}
 		return true;
@@ -334,6 +336,8 @@ public class PatternMatchingGame extends Game {
 		g.setFont(Fonts.SMALL_FONT);
 		g.drawString("Click on a tile to see its picture", 150, 65);
 		g.drawString("and find its corresponding pair", 150, 85);
+		
+		g.drawString("Level "+currentLevel,20,420);
 	}
 
 
