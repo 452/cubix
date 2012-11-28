@@ -9,7 +9,7 @@ public class GameCube
 	// !!! GAME CUBE FACE DIMENSIONS RANGE FROM 1 TO NUMBER OF DIMENSIONS !!!
 	// !!! DOES NOT BEGIN WITH 0 !!!
 
-	protected int dimension, 	midDimension;
+	protected int dimension, midDimension;
 	protected Geometry center;
 	protected Matrix m;
 	// 3D array of tiles, faces order as follows: front, back, top, bottom, right, left

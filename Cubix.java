@@ -11,6 +11,7 @@ import render.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.applet.AudioClip;
 
 public class Cubix extends RenderApplet
 {
@@ -20,6 +21,7 @@ public class Cubix extends RenderApplet
 	// Button variables
 	Polygon audioButton;
 	Polygon mainMenuButton;
+	Polygon simonGameButton;
 	Polygon maxColorGameButton;
 	Polygon matchingGameButton;
 	Polygon imageGameButton;
@@ -28,8 +30,12 @@ public class Cubix extends RenderApplet
 	Game game;
 
 	// Gameplay variables
-	boolean introScreenOn = true, gameOn = false, audioOn = true;
-	static final int MAX_COLOR_GAME = 0, MATCHING_GAME = 1, IMAGE_MATCHING = 2;
+	boolean introScreenOn = true, gameOn = false;
+	static final int MAX_COLOR_GAME = 0, MATCHING_GAME = 1, IMAGE_MATCHING = 2, SIMON_GAME = 3;
+
+	// Audio variables
+	private AudioClip backgroundAudio;
+	private boolean audioOn = true;
 
 	public void initialize()
 	{
@@ -43,8 +49,8 @@ public class Cubix extends RenderApplet
 		addLight( 1, 1, 1, .8, .85, 1);
 		addLight(-1,-1,-1, 1, 1, 1);
 		//addLight(1,1,1, 1, 1, 1);
-		addLight(1,-1,-1, 1, 1, 1);
-		addLight(1,1,-1, 1, 1, 1);
+		//addLight(1,-1,-1, 1, 1, 1);
+		//addLight(1,1,-1, 1, 1, 1);
 
 		// Set button color
 		this.buttonColor = Color.WHITE;
@@ -64,26 +70,33 @@ public class Cubix extends RenderApplet
 		this.mainMenuButton.addPoint(70, 40);
 		this.mainMenuButton.addPoint(10, 40);
 
+		// Initialize the simon game button
+		this.simonGameButton = new Polygon();
+		this.simonGameButton.addPoint(250, 130);
+		this.simonGameButton.addPoint(380, 130);
+		this.simonGameButton.addPoint(380, 170);
+		this.simonGameButton.addPoint(250, 170);
+
 		// Initialize the max color game button
 		this.maxColorGameButton = new Polygon();
-		this.maxColorGameButton.addPoint(250, 150);
-		this.maxColorGameButton.addPoint(380, 150);
-		this.maxColorGameButton.addPoint(380, 190);
 		this.maxColorGameButton.addPoint(250, 190);
+		this.maxColorGameButton.addPoint(380, 190);
+		this.maxColorGameButton.addPoint(380, 230);
+		this.maxColorGameButton.addPoint(250, 230);
 
 		// Initialize the matching game button
 		this.matchingGameButton = new Polygon();
-		this.matchingGameButton.addPoint(250, 210);
-		this.matchingGameButton.addPoint(380, 210);
-		this.matchingGameButton.addPoint(380, 250);
 		this.matchingGameButton.addPoint(250, 250);
+		this.matchingGameButton.addPoint(380, 250);
+		this.matchingGameButton.addPoint(380, 290);
+		this.matchingGameButton.addPoint(250, 290);
 
 		// Initialize the matching game button
 		this.imageGameButton = new Polygon();
-		this.imageGameButton.addPoint(250, 270);
-		this.imageGameButton.addPoint(380, 270);
-		this.imageGameButton.addPoint(380, 310);
 		this.imageGameButton.addPoint(250, 310);
+		this.imageGameButton.addPoint(380, 310);
+		this.imageGameButton.addPoint(380, 350);
+		this.imageGameButton.addPoint(250, 350);
 
 		// Call method to set up the intro/main screen
 		this.initializeIntroScreen();
@@ -99,10 +112,24 @@ public class Cubix extends RenderApplet
 			this.game.stop();
 			this.game = null;
 		}
+
+		// End any audio
+		if(this.backgroundAudio != null)
+		{
+			this.backgroundAudio.stop();
+			this.backgroundAudio = null;
+		}
 	}
 
 	private void initGame(int gameNum)
 	{
+		// Whenever starting a new game, get the camera and re-center
+		this.getRenderer().getCamera().identity();
+
+		// Initially disable the main background music
+		this.disableAudio();
+		this.getWorld().getMatrix().identity();
+
 		// Start the game selected
 		if(gameNum == MAX_COLOR_GAME)
 		{
@@ -122,7 +149,18 @@ public class Cubix extends RenderApplet
 			this.game = new games.matchingpattern.PatternMatchingGame(this, this.getWorld(), this.audioOn);
 			this.game.initGame();
 		}
-
+		else if(gameNum == SIMON_GAME)
+		{
+			this.gameOn = true;
+			this.game = new games.simonGame.SimonGame(this, this.getWorld(), this.audioOn);
+			this.game.initGame();
+		}
+		// Else if no matching game found, restart the main background music if audio on
+		else
+		{
+			if(this.audioOn)
+				this.enableAudio();
+		}
 	}
 
 	private void stopGame()
@@ -143,6 +181,10 @@ public class Cubix extends RenderApplet
 			this.game = null;
 		}
 		this.gameOn = false;
+
+		// Play any background audio
+		if(this.audioOn)
+			this.enableAudio();
 
 		// Set variable to show the intro screen
 		this.introScreenOn = true;
@@ -173,13 +215,21 @@ public class Cubix extends RenderApplet
 			g.setFont(Fonts.SMALL_FONT);
 			g.drawString("A collection of games based on a 3D cube", centerWidth-200, 80);
 
+			// Draw the simon game button
+			g.setColor(Color.WHITE);
+			g.fillPolygon(this.simonGameButton);
+			g.setColor(Color.BLACK);
+			g.setFont(Fonts.TINY_FONT);
+			g.drawString("3D SIMON GAME", this.simonGameButton.getBounds().x+20,
+				this.simonGameButton.getBounds().y+25);
+
 			// Draw the max color game button
 			g.setColor(Color.WHITE);
 			g.fillPolygon(this.maxColorGameButton);
 			g.setColor(Color.BLACK);
 			g.setFont(Fonts.TINY_FONT);
 			g.drawString("MAX COLOR GAME", this.maxColorGameButton.getBounds().x+10,
-					this.maxColorGameButton.getBounds().y+25);
+				this.maxColorGameButton.getBounds().y+25);
 
 			// Draw the matching game button
 			g.setColor(Color.WHITE);
@@ -187,8 +237,7 @@ public class Cubix extends RenderApplet
 			g.setColor(Color.BLACK);
 			g.setFont(Fonts.TINY_FONT);
 			g.drawString("MATCHING GAME", this.matchingGameButton.getBounds().x+15,
-					this.matchingGameButton.getBounds().y+25);
-
+				this.matchingGameButton.getBounds().y+25);
 
 			// Draw the matching game button
 			g.setColor(Color.WHITE);
@@ -196,7 +245,7 @@ public class Cubix extends RenderApplet
 			g.setColor(Color.BLACK);
 			g.setFont(Fonts.TINY_FONT);
 			g.drawString("IMAGE MATCHING", this.imageGameButton.getBounds().x+15,
-					this.imageGameButton.getBounds().y+25);
+				this.imageGameButton.getBounds().y+25);
 
 			g.setFont(saveOld);
 		}
@@ -262,10 +311,16 @@ public class Cubix extends RenderApplet
 			{
 				this.introScreenOn = false;
 				this.initGame(this.MATCHING_GAME);
-			}else if(this.imageGameButton.contains(x, y))
+			}
+			else if(this.imageGameButton.contains(x, y))
 			{
 				this.introScreenOn = false;
 				this.initGame(this.IMAGE_MATCHING);
+			}
+			else if(this.simonGameButton.contains(x, y))
+			{
+				this.introScreenOn = false;
+				this.initGame(this.SIMON_GAME);
 			}
 
 			return true;
@@ -310,8 +365,33 @@ public class Cubix extends RenderApplet
 		// invert audio status
 		this.audioOn = !this.audioOn;
 
-		// If game is on, toggle its audio as well
+		// If game is on, toggle its audio
 		if(this.gameOn && this.game != null)
 			this.game.toggleAudio(this.audioOn);
+		// Else if audio on, play background music
+		else if(this.audioOn)
+			this.enableAudio();
+		// Else disable background music
+		else
+			this.disableAudio();
+	}
+
+	void enableAudio()
+	{
+		if(this.backgroundAudio == null)
+		{
+			this.backgroundAudio = this.getAudioClip(this.getCodeBase(),
+				"audio/background0.wav");
+		}
+
+		this.backgroundAudio.loop();
+	}
+
+	void disableAudio()
+	{
+		if (this.backgroundAudio != null)
+		{
+			this.backgroundAudio.stop();
+		}
 	}
 }
