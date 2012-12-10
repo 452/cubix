@@ -3,6 +3,7 @@ package games.matchingGame;
 import elements.*;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.HashMap;
 
 import render.*;
 
@@ -11,6 +12,7 @@ public class MatchingCube extends GameCube
 	// Variables to handle concurrency issues
 	private boolean isActive = false;
 	private final Object LOCK = new Object();
+	public int clickTime = 0;
 
 	// Matching game specific variables
 	Material redColor, yellowColor, greenColor, blueColor, orangeColor, purpleColor;
@@ -24,10 +26,63 @@ public class MatchingCube extends GameCube
 	//3D array indicating the state of the tiles as follows : 0 : covered ; 1 : clean ; 2 : shown
 	int [][][] tileState;
 
+
 	public MatchingCube(Geometry world, int dimension)
 	{
 		super(world, dimension);
 		this.initialize(dimension);
+	}
+	
+	public Color getOneColor(){
+		if(this.previous_one == null){
+			return null;
+		}
+		else{
+			if(this.matArray[this.previous_one.face][this.previous_one.row][this.previous_one.column] == redColor){
+				return Color.RED;
+			}
+			else if(this.matArray[this.previous_one.face][this.previous_one.row][this.previous_one.column] == yellowColor){
+				return Color.YELLOW;
+			}
+			else if(this.matArray[this.previous_one.face][this.previous_one.row][this.previous_one.column] == greenColor){
+				return Color.GREEN;
+			}
+			else if(this.matArray[this.previous_one.face][this.previous_one.row][this.previous_one.column] == blueColor){
+				return Color.BLUE;
+			}
+			else if(this.matArray[this.previous_one.face][this.previous_one.row][this.previous_one.column] == orangeColor){
+				return Color.ORANGE;
+			}
+			else{
+				return Color.MAGENTA;
+			}
+		}
+	}
+	
+	public Color getTwoColor(){
+		if(this.previous_two == null){
+			return null;
+		}
+		else{
+			if(this.matArray[this.previous_two.face][this.previous_two.row][this.previous_two.column] == redColor){
+				return Color.RED;
+			}
+			else if(this.matArray[this.previous_two.face][this.previous_two.row][this.previous_two.column] == yellowColor){
+				return Color.YELLOW;
+			}
+			else if(this.matArray[this.previous_two.face][this.previous_two.row][this.previous_two.column] == greenColor){
+				return Color.GREEN;
+			}
+			else if(this.matArray[this.previous_two.face][this.previous_two.row][this.previous_two.column] == blueColor){
+				return Color.BLUE;
+			}
+			else if(this.matArray[this.previous_two.face][this.previous_two.row][this.previous_two.column] == orangeColor){
+				return Color.ORANGE;
+			}
+			else{
+				return Color.MAGENTA;
+			}
+		}
 	}
 
 	void initialize(int d)
@@ -97,10 +152,12 @@ public class MatchingCube extends GameCube
 		return this.tileState[face][row][column];
 	}
 
-	public void actionAt(int face, int row, int column){
+	public boolean actionAt(int face, int row, int column){
 		//if the tile has already been cleaned or shown, then no action
 		if(this.tileState[face][row][column] != 0)
-			return;
+			return false;
+		this.clickTime++;
+		boolean isWin = false;
 
 		if(this.previous_one != null && this.previous_two != null){
 			if(this.isMatch()){
@@ -121,7 +178,25 @@ public class MatchingCube extends GameCube
 		else if(this.previous_two == null){
 			this.previous_two = new Position(face, row, column);
 			this.showTileAt(face, row, column);
+			isWin = isWin();
 		}
+		
+		return isWin;
+	}
+	
+	public boolean isWin(){
+		int unclean_count = 0;
+		for(int face = 0; face < this.getNumFaces(); face++)
+		{
+			for(int row = 1; row <= this.getDimension(); row++)
+			{
+				for(int column = 1; column <= this.getDimension(); column++)
+				{
+					if(this.tileState[face][row][column] != 1){unclean_count ++;}
+				}
+			}
+		}
+		return unclean_count <= 6;
 	}
 
 	public boolean isMatch(){
@@ -152,6 +227,21 @@ public class MatchingCube extends GameCube
 	public void cleanTileAt(int face, int row, int column){
 		this.getFace(face)[row][column].setMaterial(this.cleanColor);
 		this.tileState[face][row][column] = 1;
+	}
+	
+	public int getColorId(Material mat){
+		if (mat == this.redColor)
+			return 1;
+		else if(mat == this.yellowColor)
+			return 2;
+		else if(mat == this.blueColor)
+			return 3;
+		else if(mat == this.greenColor)
+			return 4;
+		else if(mat == this.purpleColor)
+			return 5;
+		else
+			return 6;
 	}
 
 	public Material getRandomColor(){
