@@ -27,6 +27,9 @@
 				<path>games\simonGame</path>
 			</folderitem>
 			<folderitem>
+				<path>games\maxColorGame2</path>
+			</folderitem>
+			<folderitem>
 				<path>render</path>
 			</folderitem>
 			<folderitem>
@@ -39,6 +42,12 @@
 			<path>Cubix.java</path>
 			<source>true</source>
 			<index>0</index>
+			<active>false</active>
+		</docitem>
+		<docitem>
+			<path>games\maxColorGame2\MaxColorGame.java</path>
+			<source>true</source>
+			<index>1</index>
 			<active>true</active>
 		</docitem>
 	</open_files>

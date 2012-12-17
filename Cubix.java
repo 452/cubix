@@ -23,6 +23,7 @@ public class Cubix extends RenderApplet
 	Polygon mainMenuButton;
 	Polygon simonGameButton;
 	Polygon maxColorGameButton;
+	Polygon maxColorGame2Button;
 	Polygon matchingGameButton;
 	Polygon imageGameButton;
 	Color buttonColor;
@@ -31,7 +32,8 @@ public class Cubix extends RenderApplet
 
 	// Gameplay variables
 	boolean introScreenOn = true, gameOn = false;
-	static final int MAX_COLOR_GAME = 0, MATCHING_GAME = 1, IMAGE_MATCHING = 2, SIMON_GAME = 3;
+	static final int MAX_COLOR_GAME = 0, MATCHING_GAME = 1,
+		IMAGE_MATCHING = 2, SIMON_GAME = 3, MAX_COLOR_GAME_2 = 4;
 
 	// Audio variables
 	private AudioClip backgroundAudio;
@@ -70,6 +72,14 @@ public class Cubix extends RenderApplet
 		this.mainMenuButton.addPoint(70, 40);
 		this.mainMenuButton.addPoint(10, 40);
 
+		// Set up a temporary array to iterate through the game buttons
+		Polygon[] gameButtons = {
+			this.simonGameButton,
+			this.maxColorGameButton,
+			this.maxColorGame2Button,
+			this.matchingGameButton,
+			this.imageGameButton };
+
 		// Initialize the simon game button
 		this.simonGameButton = new Polygon();
 		this.simonGameButton.addPoint(250, 130);
@@ -84,19 +94,26 @@ public class Cubix extends RenderApplet
 		this.maxColorGameButton.addPoint(380, 230);
 		this.maxColorGameButton.addPoint(250, 230);
 
+		// Initialize the max color game v2 button
+		this.maxColorGame2Button = new Polygon();
+		this.maxColorGame2Button.addPoint(250, 250);
+		this.maxColorGame2Button.addPoint(380, 250);
+		this.maxColorGame2Button.addPoint(380, 290);
+		this.maxColorGame2Button.addPoint(250, 290);
+
 		// Initialize the matching game button
 		this.matchingGameButton = new Polygon();
-		this.matchingGameButton.addPoint(250, 250);
-		this.matchingGameButton.addPoint(380, 250);
-		this.matchingGameButton.addPoint(380, 290);
-		this.matchingGameButton.addPoint(250, 290);
+		this.matchingGameButton.addPoint(250, 310);
+		this.matchingGameButton.addPoint(380, 310);
+		this.matchingGameButton.addPoint(380, 350);
+		this.matchingGameButton.addPoint(250, 350);
 
 		// Initialize the matching game button
 		this.imageGameButton = new Polygon();
-		this.imageGameButton.addPoint(250, 310);
-		this.imageGameButton.addPoint(380, 310);
-		this.imageGameButton.addPoint(380, 350);
-		this.imageGameButton.addPoint(250, 350);
+		this.imageGameButton.addPoint(250, 370);
+		this.imageGameButton.addPoint(380, 370);
+		this.imageGameButton.addPoint(380, 410);
+		this.imageGameButton.addPoint(250, 410);
 
 		// Call method to set up the intro/main screen
 		this.initializeIntroScreen();
@@ -135,6 +152,12 @@ public class Cubix extends RenderApplet
 		{
 			this.gameOn = true;
 			this.game = new games.maxColorGame.MaxColorGame(this, this.getWorld(), this.audioOn);
+			this.game.initGame();
+		}
+		else if(gameNum == MAX_COLOR_GAME_2)
+		{
+			this.gameOn = true;
+			this.game = new games.maxColorGame2.MaxColorGame(this, this.getWorld(), this.audioOn);
 			this.game.initGame();
 		}
 		else if(gameNum == MATCHING_GAME)
@@ -231,6 +254,14 @@ public class Cubix extends RenderApplet
 			g.drawString("MAX COLOR GAME", this.maxColorGameButton.getBounds().x+10,
 				this.maxColorGameButton.getBounds().y+25);
 
+			// Draw the max color game 2 button
+			g.setColor(Color.WHITE);
+			g.fillPolygon(this.maxColorGame2Button);
+			g.setColor(Color.BLACK);
+			g.setFont(Fonts.TINY_FONT);
+			g.drawString("MAX COLOR GAME V2", this.maxColorGame2Button.getBounds().x+5,
+				this.maxColorGame2Button.getBounds().y+25);
+
 			// Draw the matching game button
 			g.setColor(Color.WHITE);
 			g.fillPolygon(this.matchingGameButton);
@@ -306,6 +337,11 @@ public class Cubix extends RenderApplet
 			{
 				this.introScreenOn = false;
 				this.initGame(this.MAX_COLOR_GAME);
+			}
+			if(this.maxColorGame2Button.contains(x, y))
+			{
+				this.introScreenOn = false;
+				this.initGame(this.MAX_COLOR_GAME_2);
 			}
 			else if(this.matchingGameButton.contains(x, y))
 			{
