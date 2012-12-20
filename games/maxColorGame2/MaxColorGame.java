@@ -487,6 +487,7 @@ public class MaxColorGame extends Game
 		g.drawString("The color with the most tiles controls that face", 170, 60);
 		g.drawString("The more faces a color controls, the faster its meter fills", 145, 75);
 		g.drawString("The first color to fill its meter wins the level", 190, 90);
+		g.drawString("Player: WHITE, controlled: GREEN LIT, Computer: BLACK, controlled: MONOCHROME", 100, 105);
 
 		// Draw player and computer meter information
 		g.setColor(Color.BLACK);

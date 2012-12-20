@@ -45,9 +45,15 @@
 			<active>false</active>
 		</docitem>
 		<docitem>
-			<path>games\maxColorGame2\MaxColorGame.java</path>
+			<path>games\maxColorGame\MaxColorGame.java</path>
 			<source>true</source>
 			<index>1</index>
+			<active>false</active>
+		</docitem>
+		<docitem>
+			<path>games\maxColorGame2\MaxColorGame.java</path>
+			<source>true</source>
+			<index>2</index>
 			<active>true</active>
 		</docitem>
 	</open_files>

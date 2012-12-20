@@ -341,6 +341,7 @@ public class MaxColorGame extends Game
 		g.drawString("Click on a tile to migrate the color to its connecting tiles", 150, 45);
 		g.drawString("The more tiles a color possesses, the faster its meter fills", 140, 60);
 		g.drawString("The first color to fill its meter wins the level", 190, 75);
+		g.drawString("Player: WHITE, Computer: BLACK", 220, 90);
 
 		// Draw player and computer meter information
 		g.setColor(Color.BLACK);
