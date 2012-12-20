@@ -216,7 +216,7 @@ public class PatternMatchingGame extends Game {
 										initLevel();
 									}
 								}
-							},1000);
+							},5000);
 						}
 
 					}
